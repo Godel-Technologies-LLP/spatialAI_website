@@ -2,19 +2,21 @@
 <img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
 </div>
 
-# Run and deploy your AI Studio app
+# Spatial AI Landing Page
 
-This contains everything you need to run your app locally.
-
-View your app in AI Studio: https://ai.studio/apps/1f281942-b59a-4dcb-a23f-6e7044f230ce
+This repository contains the source code for the Spatial AI Landing Page, showcasing technical blueprint aesthetics and interactive 3D elements.
 
 ## Run Locally
 
-**Prerequisites:**  Node.js
+**Prerequisites:** Node.js
 
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+1.  **Install dependencies:**
+    ```bash
+    npm install
+    ```
+2.  **Environment Setup:**
+    Create a `.env` file based on `.env.example` and add your `GEMINI_API_KEY`.
+3.  **Run the app:**
+    ```bash
+    npm run dev
+    ```
