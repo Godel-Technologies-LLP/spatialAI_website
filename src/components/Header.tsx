@@ -31,7 +31,7 @@ const Header = () => {
 
   return (
     <header 
-      className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 px-6 md:px-12 py-4 bg-white border-b border-gray-100/50 ${
+      className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 px-6 md:px-12 py-4 bg-white ${
         isScrolled ? "py-3 shadow-sm" : ""
       }`}
     >
@@ -69,8 +69,7 @@ const Header = () => {
             );
           })}
           <a 
-            href="https://calendly.com/vishwa-godeltech/30min" 
-            target="_blank"
+            href="https://www.linkedin.com/company/godeltech/"            target="_blank"
             rel="noopener noreferrer"
             className="bg-black text-white px-6 py-2.5 rounded-full text-sm font-medium hover:bg-black/80 transition-all active:scale-95 shadow-lg shadow-black/10"
           >
@@ -118,7 +117,7 @@ const Header = () => {
               );
             })}
             <a 
-              href="https://calendly.com/vishwa-godeltech/30min" 
+              href="https://www.linkedin.com/company/godeltech/" 
               target="_blank"
               rel="noopener noreferrer"
               className="bg-black text-white px-6 py-4 rounded-xl text-center font-medium shadow-lg shadow-black/10"
