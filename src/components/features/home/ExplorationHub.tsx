@@ -4,6 +4,8 @@ import { ArrowRight } from "lucide-react";
 import { HOME_ECOSYSTEM, HOME_ECOSYSTEM_TEXT } from "../../../data/home";
 import { TechnicalLabel } from "../../ui/Typography";
 
+const MotionLink = motion(Link);
+
 const SolutionsIllustration = () => (
   <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
     <motion.div animate={{ rotate: [0, 90, 180, 270, 360], scale: [1, 1.1, 1] }} transition={{ duration: 20, repeat: Infinity, ease: "linear" }} className="w-48 h-48 border border-black/5 rounded-3xl relative">
@@ -44,7 +46,7 @@ export const ExplorationHub = () => {
 
         <div className="grid lg:grid-cols-2 gap-12">
           {HOME_ECOSYSTEM.map((hub, i) => (
-            <motion(Link)
+            <MotionLink
               key={hub.title} to={hub.link} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.2, duration: 0.8 }}
               whileHover={{ scale: 1.02, transition: { type: "spring", stiffness: 400, damping: 10 } }}
               className="bg-white rounded-[48px] p-10 md:p-14 border border-black/5 group overflow-hidden relative shadow-sm hover:shadow-2xl hover:shadow-black/5 transition-all duration-500"
@@ -62,7 +64,7 @@ export const ExplorationHub = () => {
                 {hub.visual === "solutions" ? <SolutionsIllustration /> : <CaseStudiesIllustration />}
               </div>
               <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/graphy.png')] opacity-[0.02] pointer-events-none" />
-            </motion(Link)>
+            </MotionLink>
           ))}
         </div>
       </div>
