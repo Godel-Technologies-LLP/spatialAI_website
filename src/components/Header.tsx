@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { SOCIAL_LINKS } from "../constants/links";
 import logo from "../assets/logo.png";
 
 const Header = () => {
@@ -69,7 +70,7 @@ const Header = () => {
             );
           })}
           <a 
-            href="https://www.linkedin.com/company/godeltech/"            target="_blank"
+            href={SOCIAL_LINKS.CALENDLY}            target="_blank"
             rel="noopener noreferrer"
             className="bg-black text-white px-6 py-2.5 rounded-full text-sm font-medium hover:bg-black/80 transition-all active:scale-95 shadow-lg shadow-black/10"
           >
@@ -117,7 +118,7 @@ const Header = () => {
               );
             })}
             <a 
-              href="https://www.linkedin.com/company/godeltech/" 
+              href={SOCIAL_LINKS.CALENDLY} 
               target="_blank"
               rel="noopener noreferrer"
               className="bg-black text-white px-6 py-4 rounded-xl text-center font-medium shadow-lg shadow-black/10"

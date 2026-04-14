@@ -1,4 +1,5 @@
 import { motion } from "motion/react";
+import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { HOME_ECOSYSTEM, HOME_ECOSYSTEM_TEXT } from "../../../data/home";
 import { TechnicalLabel } from "../../ui/Typography";
@@ -43,8 +44,8 @@ export const ExplorationHub = () => {
 
         <div className="grid lg:grid-cols-2 gap-12">
           {HOME_ECOSYSTEM.map((hub, i) => (
-            <motion.a
-              key={hub.title} href={hub.link} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.2, duration: 0.8 }}
+            <motion(Link)
+              key={hub.title} to={hub.link} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.2, duration: 0.8 }}
               whileHover={{ scale: 1.02, transition: { type: "spring", stiffness: 400, damping: 10 } }}
               className="bg-white rounded-[48px] p-10 md:p-14 border border-black/5 group overflow-hidden relative shadow-sm hover:shadow-2xl hover:shadow-black/5 transition-all duration-500"
             >
@@ -61,7 +62,7 @@ export const ExplorationHub = () => {
                 {hub.visual === "solutions" ? <SolutionsIllustration /> : <CaseStudiesIllustration />}
               </div>
               <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/graphy.png')] opacity-[0.02] pointer-events-none" />
-            </motion.a>
+            </motion(Link)>
           ))}
         </div>
       </div>

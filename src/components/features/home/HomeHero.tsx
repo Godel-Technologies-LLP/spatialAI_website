@@ -98,7 +98,7 @@ export const CTA = () => {
             <h2 className="text-5xl md:text-8xl font-medium tracking-tighter mb-12 text-balance leading-[0.9]">
               Stop Drafting. <br/> Start Engineering.
             </h2>
-            <a href={SOCIAL_LINKS.LINKEDIN} target="_blank" rel="noopener noreferrer" className="bg-white text-black px-12 py-6 rounded-full font-medium text-xl hover:scale-110 transition-transform active:scale-95 inline-block text-center">
+            <a href={SOCIAL_LINKS.CALENDLY} target="_blank" rel="noopener noreferrer" className="bg-white text-black px-12 py-6 rounded-full font-medium text-xl hover:scale-110 transition-transform active:scale-95 inline-block text-center">
               Collaborate & Scale your Vision
             </a>
           </div>
