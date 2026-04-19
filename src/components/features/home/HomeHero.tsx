@@ -102,11 +102,54 @@ export const CTA = () => {
               Collaborate & Scale your Vision
             </a>
           </div>
-          <div className="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none">
-            <img 
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1E8BXqYkCPP3P9t9mkIPWzfISKgL7-GvaCIvK1n7BdbZbBnkagC6Ds4OVN0DgdsxHTmZh-sQfPvIRuZKiZq8mBc7tObEklG2r9mlBIy7s1puOk4MEChma4qCOrhgGQyqyoostFf2DSvlV7YFWxN6zxPAe4FSQ633VAeMcnd7DsRKU5LEsRy8uNvzVRyKUQxQM6K01sIBOk_zZ36cWal6uQvmUGXr1hnVKo35IhmFJzfsHMtq3QDg6osqH0_g6crRFaDY5_05zwVw" 
-              alt="Background" className="w-full h-full object-cover" referrerPolicy="no-referrer"
+          <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none rounded-[60px]">
+            {/* Base Layer */}
+            <div className="absolute inset-0 bg-black" />
+            
+            {/* Animated Grid */}
+            <div className="absolute inset-0 opacity-40">
+              <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <pattern id="interactive-grid" width="60" height="60" patternUnits="userSpaceOnUse">
+                    <path d="M 60 0 L 0 0 0 60" fill="none" stroke="white" strokeWidth="1" />
+                  </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#interactive-grid)" />
+              </svg>
+            </div>
+
+            {/* Glowing Ambient Orbs */}
+            <motion.div 
+              animate={{ 
+                scale: [1, 1.2, 1],
+                opacity: [0.4, 0.7, 0.4],
+                x: [0, 50, -50, 0],
+                y: [0, -50, 50, 0]
+              }}
+              transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+              className="absolute -top-[20%] -left-[10%] w-[50%] h-[80%] bg-[#FF4A22] rounded-full mix-blend-screen filter blur-[120px]"
             />
+            
+            <motion.div 
+              animate={{ 
+                scale: [1, 1.5, 1],
+                opacity: [0.3, 0.6, 0.3],
+                x: [0, -100, 100, 0],
+                y: [0, 80, -80, 0]
+              }}
+              transition={{ duration: 20, repeat: Infinity, ease: "linear", delay: 2 }}
+              className="absolute top-[40%] -right-[10%] w-[60%] h-[70%] bg-[#10B981] rounded-full mix-blend-screen filter blur-[100px]"
+            />
+
+            {/* Moving Scanline */}
+            <motion.div 
+              animate={{ y: ["-100%", "200%"] }}
+              transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+              className="absolute top-0 left-0 right-0 h-[40%] bg-gradient-to-b from-transparent via-white/[0.15] to-transparent skew-y-[-10deg]"
+            />
+            
+            {/* Vignette mask */}
+            <div className="absolute inset-0 shadow-[inset_0_0_150px_rgba(0,0,0,1)] bg-[radial-gradient(ellipse_at_center,_transparent_0%,_rgba(0,0,0,0.6)_100%)]" />
           </div>
         </motion.div>
       </div>

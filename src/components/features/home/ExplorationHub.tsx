@@ -71,3 +71,4 @@ export const ExplorationHub = () => {
     </section>
   );
 };
+

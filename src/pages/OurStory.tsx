@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
-import { motion } from "motion/react";
+import { motion, useScroll, useTransform } from "motion/react";
 import * as LucideIcons from "lucide-react";
 import Layout from "../components/layout/Layout";
 import StoryVisual from "../components/features/visuals/StoryVisual";
-import { TechnicalLabel } from "../components/ui/Typography";
 import { STORY_CHAPTERS, LEADERSHIP_EXPERTISE } from "../data/story";
 
 const OurStory = () => {
-  const [activeSection, setActiveSection] = useState("about");
+  const [activeSection, setActiveSection] = useState("genesis");
+  const { scrollYProgress } = useScroll();
+  const yOffset = useTransform(scrollYProgress, [0, 1], [0, 200]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -18,7 +19,7 @@ const OurStory = () => {
           }
         });
       },
-      { threshold: 0.5 }
+      { threshold: 0.3 }
     );
 
     STORY_CHAPTERS.forEach((chapter) => {
@@ -31,25 +32,31 @@ const OurStory = () => {
 
   return (
     <Layout>
-      {/* Side Navigation - Desktop */}
-      <nav className="fixed left-8 top-1/2 -translate-y-1/2 z-50 hidden xl:flex flex-col gap-8">
+      {/* Immersive Vertical Navigation */}
+      <nav className="fixed left-6 md:left-12 top-1/2 -translate-y-1/2 z-50 hidden lg:flex flex-col gap-12">
         {STORY_CHAPTERS.map((chapter) => (
           <button
             key={chapter.id}
-            onClick={() => document.getElementById(chapter.id)?.scrollIntoView({ behavior: 'smooth' })}
-            className="group flex items-center gap-4 text-left"
+            onClick={() => {
+              const el = document.getElementById(chapter.id);
+              if (el) {
+                const y = el.getBoundingClientRect().top + window.scrollY - 100;
+                window.scrollTo({ top: y, behavior: 'smooth' });
+              }
+            }}
+            className="group flex flex-col items-start gap-3 relative"
           >
-            <div className={`h-[1px] transition-all duration-500 ${
-              activeSection === chapter.id ? 'w-12 bg-black' : 'w-4 bg-black/20 group-hover:w-8 group-hover:bg-black/40'
-            }`} />
-            <div className="flex flex-col">
-              <span className={`technical-label !text-[8px] transition-colors duration-500 ${
-                activeSection === chapter.id ? 'text-black' : 'text-black/20'
-              }`}>
-                {chapter.label}
-              </span>
-              <span className={`text-[10px] font-bold tracking-tight transition-colors duration-500 ${
-                activeSection === chapter.id ? 'text-black' : 'text-black/20 group-hover:text-black/40'
+            <div className={`text-[9px] font-mono tracking-[0.2em] transition-all duration-500 uppercase ${
+              activeSection === chapter.id ? 'text-[#FF4A22]' : 'text-gray-400 group-hover:text-gray-600'
+            }`}>
+              {chapter.label}
+            </div>
+            <div className="flex items-center gap-4">
+              <div className={`h-[1px] transition-all duration-700 ease-out ${
+                activeSection === chapter.id ? 'w-16 bg-[#FF4A22]' : 'w-4 bg-gray-300 group-hover:w-8 group-hover:bg-gray-400'
+              }`} />
+              <span className={`text-sm font-bold tracking-tight transition-colors duration-500 ${
+                activeSection === chapter.id ? 'text-black' : 'text-gray-300 group-hover:text-gray-800'
               }`}>
                 {chapter.title}
               </span>
@@ -58,139 +65,167 @@ const OurStory = () => {
         ))}
       </nav>
 
-      <main className="pt-32 md:pt-48 pb-12">
-        <section className="px-6 md:px-12 lg:px-24 max-w-7xl mx-auto">
-          {/* Hero Section */}
-          <div className="grid lg:grid-cols-2 gap-12 md:gap-24 items-start mb-24">
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              <TechnicalLabel className="mb-6">Introduction</TechnicalLabel>
-              <h1 className="text-5xl md:text-8xl font-medium tracking-tighter mb-12 uppercase leading-[0.9] tracking-tighter-extra">
-                Our <br/> Story
-              </h1>
-              <p className="text-2xl md:text-3xl text-black/80 font-medium leading-tight text-balance">
-                Pioneering the intersection of <span className="text-black/40 italic">Computational Geometry</span> and <span className="text-black/40 italic">Artificial Intelligence</span>.
-              </p>
-            </motion.div>
+      {/* Cinematic Content */}
+      <main className="bg-white min-h-screen pb-32">
+        
+        {/* Massive Hero */}
+        <section className="pt-32 md:pt-48 px-6 md:px-12 lg:px-32 xl:px-48 max-w-7xl mx-auto relative z-10 mb-16 md:mb-32">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <div className="flex items-center gap-4 mb-6 md:mb-8">
+              <span className="w-8 h-[2px] bg-[#FF4A22]"></span>
+              <span className="text-[#FF4A22] text-[10px] md:text-xs font-mono font-bold tracking-[0.3em] uppercase">Manifesto</span>
+            </div>
+            <h1 className="text-5xl sm:text-6xl md:text-8xl lg:text-[110px] font-headline font-medium tracking-tighter text-black leading-[0.85] uppercase mb-8 md:mb-12 break-words">
+              Architecting <br/> The Physical <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-black to-gray-500">Frontier.</span>
+            </h1>
+          </motion.div>
+        </section>
 
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1.2, delay: 0.2, ease: "easeOut" }}
-              className="relative aspect-square md:aspect-[4/5] rounded-[48px] overflow-hidden bg-brand-gray/30 border border-black/5 shadow-2xl group flex items-center justify-center"
+        {/* Dynamic Story Spine */}
+        <div className="border-l border-gray-100/50 max-w-7xl mx-auto lg:pl-32 xl:pl-48">
+          
+          {/* Chapter 1: Genesis */}
+          <section id="genesis" className="px-6 md:px-12 py-24 md:py-32 relative">
+            <div className="grid lg:grid-cols-2 gap-16 items-start">
+              <motion.div 
+                initial={{ opacity: 0, x: -50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: "-20%" }}
+                transition={{ duration: 0.8 }}
+                className="max-w-xl"
+              >
+                <div className="text-[10px] text-gray-400 font-mono tracking-widest uppercase mb-6 flex items-center gap-2">
+                  <span className="w-2 h-2 bg-black rounded-full" /> 
+                  {STORY_CHAPTERS[0].label}
+                </div>
+                <h2 className="text-4xl md:text-5xl font-headline tracking-tighter mb-12 uppercase leading-none">
+                  {STORY_CHAPTERS[0].heading}
+                </h2>
+                <div className="space-y-8 text-xl font-serif text-gray-600 leading-relaxed">
+                  {STORY_CHAPTERS[0].paragraphs?.map((p, i) => (
+                    <p key={i} className={i === 2 ? "text-black font-medium text-2xl border-l-4 border-[#FF4A22] pl-6 py-2 bg-gray-50/50" : ""}>{p}</p>
+                  ))}
+                </div>
+              </motion.div>
+
+              <motion.div 
+                style={{ y: yOffset }}
+                className="sticky top-40 hidden lg:block h-[500px] w-full rounded-[40px] overflow-hidden shadow-2xl border border-white/10"
+              >
+                <StoryVisual />
+              </motion.div>
+            </div>
+          </section>
+
+          {/* Chapter 2: The Frontier (Inverted Dark Block) */}
+          <section id="spatial" className="px-6 md:px-12 py-16 md:py-32 relative">
+            <motion.div 
+              initial={{ scale: 0.95, opacity: 0 }}
+              whileInView={{ scale: 1, opacity: 1 }}
+              viewport={{ once: true, margin: "-10%" }}
+              transition={{ duration: 1, ease: "easeOut" }}
+              className="bg-black text-white rounded-[32px] md:rounded-[40px] lg:rounded-[60px] p-8 md:p-16 lg:p-24 relative overflow-hidden shadow-2xl"
             >
-              <StoryVisual />
+              <div className="absolute inset-0 opacity-20 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#FF4A22]/40 via-black to-black pointer-events-none" />
               
-              <div className="absolute bottom-12 left-12 right-12 text-black/80 pointer-events-none">
-                <TechnicalLabel className="!text-black/30 mb-2">Internal Visualization</TechnicalLabel>
-                <div className="text-xs font-bold tracking-widest uppercase pb-4 mb-4">Godel-Core V1.0</div>
-                <p className="text-[10px] text-black/40 leading-relaxed font-mono uppercase tracking-widest">Architecting spatial foundations with surgical precision.</p>
+              <div className="relative z-10 max-w-3xl">
+                <div className="text-[10px] text-[#FF4A22] font-mono tracking-widest uppercase mb-6 md:mb-8 flex items-center gap-3">
+                  <span className="animate-pulse w-3 h-3 bg-[#FF4A22] rounded-sm" /> 
+                  {STORY_CHAPTERS[1].label}
+                </div>
+                <h2 className="text-4xl sm:text-5xl md:text-7xl font-headline tracking-tighter mb-8 md:mb-12 uppercase leading-none text-white break-words">
+                  {STORY_CHAPTERS[1].heading}
+                </h2>
+                
+                <p className="text-xl md:text-3xl lg:text-4xl leading-tight font-medium mb-8 md:mb-12 text-gray-300">
+                  {STORY_CHAPTERS[1].definition}
+                </p>
+                <p className="text-base md:text-lg lg:text-xl leading-relaxed text-gray-500 font-serif border-t border-white/10 pt-8">
+                  {STORY_CHAPTERS[1].subtext}
+                </p>
               </div>
             </motion.div>
-          </div>
+          </section>
 
-          <div className="max-w-4xl space-y-24 lg:ml-24">
-            {/* Chapters Mapping */}
-            {STORY_CHAPTERS.map((chapter) => {
-              const isSpatial = chapter.id === "spatial";
-              const isLeadership = chapter.id === "leadership";
+          {/* Chapter 3: Architects */}
+          <section id="leadership" className="px-6 md:px-12 py-16 md:py-32 relative">
+            <div className="max-w-4xl">
+              <div className="text-[10px] text-gray-400 font-mono tracking-widest uppercase mb-6 flex items-center gap-2">
+                <span className="w-2 h-2 bg-black rounded-full" /> 
+                {STORY_CHAPTERS[2].label}
+              </div>
+              <h2 className="text-4xl md:text-6xl font-headline tracking-tighter mb-6 md:mb-8 uppercase leading-none">
+                {STORY_CHAPTERS[2].heading}
+              </h2>
+              <p className="text-xl md:text-2xl font-serif text-gray-600 mb-12 md:mb-20 max-w-2xl leading-relaxed">
+                {STORY_CHAPTERS[2].intro}
+              </p>
 
-              if (isSpatial) {
-                return (
-                  <motion.section 
-                    key={chapter.id}
-                    id={chapter.id}
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-20%" }}
-                    className="relative bg-brand-black text-white rounded-[60px] p-12 md:p-24 overflow-hidden"
-                  >
-                    <div className="relative z-10">
-                      <TechnicalLabel className="!text-white/40 mb-8">Technical Definition</TechnicalLabel>
-                      <h2 className="text-4xl md:text-6xl font-medium tracking-tighter mb-12 uppercase leading-none">
-                        {chapter.heading}
-                      </h2>
-                      <p className="text-xl md:text-3xl text-white/60 leading-relaxed font-medium mb-12">
-                        {chapter.definition?.split("Spatial AI").map((part, i, arr) => (
-                          <span key={i}>
-                            {part}
-                            {i < arr.length - 1 && <span className="text-white">Spatial AI</span>}
-                          </span>
-                        ))}
-                      </p>
-                      <p className="text-lg md:text-xl text-white/40 leading-relaxed">
-                        {chapter.subtext}
-                      </p>
-                    </div>
-                    <div className="absolute top-0 right-0 w-full h-full opacity-10 pointer-events-none grid-bg" />
-                  </motion.section>
-                );
-              }
+              {/* Founder Dossier Grid */}
+              <div className="grid lg:grid-cols-3 gap-6">
+                {LEADERSHIP_EXPERTISE.map((item, i) => {
+                  const Icon = LucideIcons[item.icon as keyof typeof LucideIcons] as React.ElementType;
+                  const isMain = i === 0;
 
-              return (
-                <motion.section 
-                  key={chapter.id}
-                  id={chapter.id}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-20%" }}
-                  className="relative"
-                >
-                  <h2 className="text-4xl md:text-6xl font-medium tracking-tighter mb-16 uppercase pb-8">
-                    {chapter.heading?.split("<br/>").map((part, i) => <span key={i}>{part}{i === 0 && <br/>}</span>)}
-                  </h2>
-                  
-                  {chapter.paragraphs && (
-                    <div className="space-y-8 text-xl md:text-2xl text-black/60 leading-relaxed font-medium">
-                      {chapter.paragraphs.map((p, i) => (
-                        <p key={i} className={i === 0 ? "text-black" : ""}>{p}</p>
-                      ))}
-                    </div>
-                  )}
+                  return (
+                    <motion.div
+                      key={i}
+                      whileHover={{ y: -10 }}
+                      className={`p-8 rounded-[32px] border transition-all duration-500 ${
+                        isMain 
+                          ? 'lg:col-span-3 bg-gray-50 border-gray-200 grid lg:grid-cols-3 gap-12 items-center' 
+                          : 'bg-white border-gray-100 hover:shadow-xl hover:border-gray-200'
+                      }`}
+                    >
+                      {isMain ? (
+                        <>
+                          <div className="lg:col-span-1 border-r border-gray-200/50 pr-8">
+                            <div className="text-[10px] text-gray-400 font-mono tracking-widest uppercase mb-4">Core Architect</div>
+                            <h3 className="text-3xl font-headline tracking-tighter uppercase mb-2">{item.title}</h3>
+                            <div className="text-[#FF4A22] text-sm font-bold uppercase tracking-widest">{item.role}</div>
+                          </div>
+                          <div className="lg:col-span-2">
+                            <Icon className="w-8 h-8 text-gray-300 mb-6" />
+                            <p className="text-xl text-gray-600 font-serif leading-relaxed">{item.desc}</p>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400 mb-8 border border-gray-100">
+                            {Icon && <Icon className="w-5 h-5" />}
+                          </div>
+                          <div className="text-[10px] text-gray-400 font-mono tracking-widest uppercase mb-3">{item.role}</div>
+                          <h4 className="text-2xl font-headline tracking-tighter uppercase mb-4">{item.title}</h4>
+                          <p className="text-gray-500 leading-relaxed">{item.desc}</p>
+                        </>
+                      )}
+                    </motion.div>
+                  );
+                })}
+              </div>
 
-                  {isLeadership && (
-                    <>
-                      <p className="text-2xl font-medium text-black/80 mb-16 max-w-2xl leading-tight mt-16">
-                        {chapter.intro}
-                      </p>
-                      <div className="grid gap-6">
-                        {LEADERSHIP_EXPERTISE.map((item, i) => {
-                          const Icon = LucideIcons[item.icon as keyof typeof LucideIcons] as React.ElementType;
-                          return (
-                            <motion.div
-                              key={i}
-                              whileHover={{ scale: 0.99, x: 10 }}
-                              className="p-8 rounded-3xl border border-black/5 bg-white/50 backdrop-blur-sm group transition-all hover:bg-white hover:shadow-xl hover:shadow-black/5"
-                            >
-                              <div className="flex items-start gap-6">
-                                <div className="w-10 h-10 rounded-xl bg-black/5 flex items-center justify-center text-black/20 group-hover:bg-black group-hover:text-white transition-colors duration-500">
-                                  {Icon && <Icon className="w-5 h-5" />}
-                                </div>
-                                <div className="flex-1">
-                                  <TechnicalLabel className="mb-2">Expertise Block {i+1}</TechnicalLabel>
-                                  <h4 className="text-xl font-bold mb-3 tracking-tight uppercase">{item.title}</h4>
-                                  <p className="text-black/60 leading-relaxed font-medium">{item.desc}</p>
-                                </div>
-                              </div>
-                            </motion.div>
-                          );
-                        })}
-                      </div>
-                      <div className="mt-24 pt-12">
-                        <p className="text-xl italic text-black/40 font-medium leading-relaxed">
-                          "{chapter.quote}"
-                        </p>
-                      </div>
-                    </>
-                  )}
-                </motion.section>
-              );
-            })}
-          </div>
-        </section>
+              {/* Closing Quotation */}
+              <motion.div 
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                className="mt-20 md:mt-32 pt-12 md:pt-16 border-t border-gray-100"
+              >
+                <div className="relative">
+                  <span className="absolute -top-8 md:-top-12 -left-4 md:-left-6 text-7xl md:text-9xl text-gray-100 font-serif leading-none">"</span>
+                  <p className="text-2xl sm:text-3xl md:text-5xl font-headline tracking-tighter leading-tight relative z-10 text-black max-w-3xl pt-4">
+                    {STORY_CHAPTERS[2].quote}
+                  </p>
+                </div>
+              </motion.div>
+            </div>
+          </section>
+
+        </div>
       </main>
     </Layout>
   );

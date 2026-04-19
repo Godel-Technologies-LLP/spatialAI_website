@@ -1,84 +1,137 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Layout from '../components/layout/Layout';
-import { SectionHeading } from '../components/ui/Typography';
+import { motion, AnimatePresence } from 'motion/react';
+import { SolutionsFilter } from '../components/features/solutions/SolutionsFilter';
+import { SOLUTIONS_DATA, SOLUTIONS_FILTERS, SolutionProject } from '../data/solutions';
+import { TechnicalLabel } from '../components/ui/Typography';
+import { ArrowUpRight } from 'lucide-react';
+
+const SolutionCard = ({ project }: { project: SolutionProject }) => (
+  <motion.div
+    layout
+    initial={{ opacity: 0, scale: 0.9 }}
+    animate={{ opacity: 1, scale: 1 }}
+    exit={{ opacity: 0, scale: 0.9 }}
+    className="group bg-white rounded-[32px] p-8 md:p-10 border border-black/5 hover:border-black/20 hover:shadow-2xl hover:shadow-black/5 transition-all duration-500 flex flex-col h-full overflow-hidden relative"
+  >
+    <div className="relative z-10 flex flex-col h-full">
+      <div className="flex justify-between items-start mb-6">
+        <TechnicalLabel className="opacity-40">{project.tag}</TechnicalLabel>
+        <ArrowUpRight className="w-5 h-5 opacity-0 group-hover:opacity-100 transition-all duration-500 -translate-y-2 translate-x-2 group-hover:translate-x-0 group-hover:translate-y-0" />
+      </div>
+      
+      <h3 className="text-2xl md:text-3xl font-medium mb-4 tracking-tighter group-hover:text-black transition-colors">
+        {project.title}
+      </h3>
+      
+      <p className="text-black/40 text-sm md:text-base mb-8 line-clamp-3">
+        {project.description}
+      </p>
+
+      <div className="mt-auto flex flex-wrap gap-2">
+        {project.skills.slice(0, 2).map((skill) => (
+          <span key={skill} className="px-3 py-1 bg-black/5 rounded-full text-[10px] font-bold uppercase tracking-widest text-black/40">
+            {skill}
+          </span>
+        ))}
+        {project.verticals.slice(0, 1).map((vertical) => (
+          <span key={vertical} className="px-3 py-1 bg-black/5 rounded-full text-[10px] font-bold uppercase tracking-widest text-black/40">
+            {vertical}
+          </span>
+        ))}
+      </div>
+    </div>
+    
+    <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/graphy.png')] opacity-[0.01] pointer-events-none" />
+  </motion.div>
+);
 
 const Solutions = () => {
-  const [activeDomain, setActiveDomain] = useState('Architecture');
+  const [selectedFilters, setSelectedFilters] = useState({
+    skills: [] as string[],
+    verticals: [] as string[],
+    applications: [] as string[]
+  });
 
-  const domains = [
-    { name: 'Architecture', icon: 'architecture' },
-    { name: 'Agritech', icon: 'agriculture' },
-    { name: 'Manufacturing', icon: 'factory' }
-  ];
+  const handleUpdateFilter = (category: string, item: string) => {
+    setSelectedFilters(prev => {
+      const current = prev[category as keyof typeof prev];
+      const updated = current.includes(item)
+        ? current.filter(i => i !== item)
+        : [...current, item];
+      return { ...prev, [category]: updated };
+    });
+  };
+
+  const handleClearFilters = () => {
+    setSelectedFilters({
+      skills: [],
+      verticals: [],
+      applications: []
+    });
+  };
+
+  const filteredProjects = useMemo(() => {
+    return SOLUTIONS_DATA.filter(project => {
+      const skillsMatch = selectedFilters.skills.length === 0 || 
+        selectedFilters.skills.some(s => project.skills.includes(s));
+      const verticalsMatch = selectedFilters.verticals.length === 0 || 
+        selectedFilters.verticals.some(v => project.verticals.includes(v));
+      const appsMatch = selectedFilters.applications.length === 0 || 
+        selectedFilters.applications.some(a => project.applications.includes(a));
+      
+      return skillsMatch && verticalsMatch && appsMatch;
+    });
+  }, [selectedFilters]);
 
   return (
     <Layout>
-      <div className="pt-24 min-h-screen">
-        {/* Sticky Mobile Sub-Nav */}
-        <div className="sticky top-[72px] bg-white/80 backdrop-blur-md z-[90] border-b border-gray-100 md:hidden overflow-x-auto whitespace-nowrap px-6 py-4 hide-scrollbar">
-          <div className="flex gap-8">
-            {domains.map((domain) => (
-              <button
-                key={domain.name}
-                onClick={() => setActiveDomain(domain.name)}
-                className={`text-[10px] font-medium uppercase tracking-widest transition-all duration-300 pb-1 border-b-2 ${
-                  activeDomain === domain.name ? 'text-black border-black' : 'text-black/30 border-transparent'
-                }`}
-              >
-                {domain.name}
-              </button>
-            ))}
+      <div className="pt-32 pb-32 min-h-screen bg-brand-gray/30">
+        <div className="max-w-7xl mx-auto px-6 md:px-12">
+          {/* Header */}
+          <div className="mb-20">
+            <TechnicalLabel className="mb-4 opacity-40">System Logic</TechnicalLabel>
+            <h1 className="text-4xl md:text-7xl font-medium tracking-tighter mb-8 uppercase leading-none">
+              Industrial <br /> Solutions
+            </h1>
+            <p className="text-lg md:text-xl text-black/40 max-w-xl font-medium">
+              Filter through our expertise across technical domains, industry verticals, and specific algorithmic applications.
+            </p>
+          </div>
+
+          {/* Filters */}
+          <SolutionsFilter
+            filters={SOLUTIONS_FILTERS}
+            selected={selectedFilters}
+            onUpdate={handleUpdateFilter}
+            onClear={handleClearFilters}
+          />
+
+          {/* Results Area */}
+          <div className="relative">
+            <AnimatePresence mode="popLayout">
+              {filteredProjects.length > 0 ? (
+                <motion.div 
+                  layout
+                  className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+                >
+                  {filteredProjects.map((project) => (
+                    <SolutionCard key={project.id} project={project} />
+                  ))}
+                </motion.div>
+              ) : (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  className="flex flex-col items-center justify-center py-32 text-center"
+                >
+                  <h3 className="text-xl font-medium tracking-[0.3em] uppercase text-black/40">To be updated</h3>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
-
-        {/* SideNavBar - Desktop only */}
-        <aside className="fixed left-0 top-24 h-[calc(100vh-96px)] flex flex-col p-8 bg-white w-80 z-40 hidden lg:flex border-r border-gray-100">
-          <div className="mb-12">
-            <h3 className="font-label uppercase tracking-widest text-[10px] text-black/40 mb-1 font-semibold">SOLUTIONS</h3>
-            <p className="font-label uppercase tracking-widest text-[9px] text-black/20 font-semibold">Technical Domains</p>
-          </div>
-          <nav className="flex-1 space-y-2">
-            {domains.map((domain) => (
-              <button
-                key={domain.name}
-                onClick={() => setActiveDomain(domain.name)}
-                className={`flex items-center gap-4 p-4 w-full text-left transition-all duration-300 rounded-xl font-label uppercase tracking-widest text-[10px] border ${
-                  activeDomain === domain.name 
-                    ? 'text-black font-medium bg-black/5 border-black/5' 
-                    : 'text-black/40 hover:bg-black/5 hover:text-black border-transparent'
-                }`}
-              >
-                <span className="material-symbols-outlined">{domain.icon}</span>
-                {domain.name}
-              </button>
-            ))}
-          </nav>
-          <div className="mt-auto space-y-4 pt-8 border-t border-gray-100">
-            <a className="flex items-center gap-4 text-black/40 hover:text-black transition-all font-label uppercase tracking-widest text-[9px]" href="#">
-              <span className="material-symbols-outlined text-sm">menu_book</span>
-              Documentation
-            </a>
-            <a className="flex items-center gap-4 text-black/40 hover:text-black transition-all font-label uppercase tracking-widest text-[9px]" href="#">
-              <span className="material-symbols-outlined text-sm">contact_support</span>
-              Support
-            </a>
-          </div>
-        </aside>
-
-        {/* Main Content */}
-        <main className="lg:pl-80 pt-12">
-          <section className="flex flex-col items-center justify-center min-h-[60vh] px-6 text-center">
-            <span className="material-symbols-outlined text-6xl text-black/10 mb-8">
-              {domains.find(d => d.name === activeDomain)?.icon}
-            </span>
-            <h2 className="text-4xl md:text-6xl font-headline font-medium text-black tracking-tighter mb-4">
-              {activeDomain} <br className="md:hidden" /> Solutions
-            </h2>
-            <p className="text-black/40 font-label uppercase tracking-[0.3em] text-xs font-medium">
-              To be updated
-            </p>
-          </section>
-        </main>
       </div>
     </Layout>
   );
