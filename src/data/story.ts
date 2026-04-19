@@ -1,47 +1,50 @@
 export const STORY_CHAPTERS = [
   { 
-    id: "about", 
-    title: "01. About", 
-    label: "FOUNDING STORY",
-    heading: "01. About Godel Tech",
+    id: "genesis", 
+    title: "01. Genesis", 
+    label: "THE INCEPTION",
+    heading: "01. The Interface Illusion",
     paragraphs: [
-      "Founded in 2024 - at the dawn of the Large Language Model (LLM) explosion - Godel Technologies LLP began with a mission to humanize the digital experience.",
-      "We specialized in dismantling rigid SaaS workflows and replacing them with deeply integrated conversational layers, shifting the user experience from tedious UI navigation to intuitive voice diction.",
-      "As the industry evolved and autonomous \"agentic swarms\" made basic LLM integration accessible to everyone, we stayed true to our DNA: staying ahead of the curve. Today, Godel Technologies has pivoted to the true frontier of intelligence: Spatial AI."
+      "In 2024, the tech world celebrated a milestone: Large Language Models made natural conversation with machines possible. Software interfaces became text boxes. Everyone rejoiced.",
+      "But we saw the paradox. While AI had finally learned to talk to humans, it was completely blind to the human world. It was trapped in a 2D digital vacuum—a mind without eyes, unable to grasp depth, volume, or physical reality.",
+      "Godel Technologies was born from a fundamental realization: The future of artificial intelligence isn't answering questions in a terminal. It’s interacting with the physical world in three dimensions. We aren't building chatbots. We are breaking machines out of the screen."
     ]
   },
   { 
     id: "spatial", 
-    title: "02. Spatial AI", 
-    label: "THE FRONTIER",
-    heading: "What is Spatial AI?",
-    definition: "While standard AI excels at processing text and code, Spatial AI is the technology that allows machines to understand, reason with, and navigate the 3D physical world.",
-    subtext: "It involves teaching models to comprehend depth, volume, and geometric relationships - a domain where even the most advanced current LLMs still struggle to keep pace."
+    title: "02. The Frontier", 
+    label: "CORE TECHNOLOGY",
+    heading: "The Intelligence of Space",
+    definition: "Spatial AI is the tectonic shift from linguistics to physics—giving machines the architectural intuition to understand, reason with, and navigate 3D environments.",
+    subtext: "It demands teaching neural networks the mathematics of depth, the logic of geometry, and spatial relationships—domains where traditional language models simply hallucinate. We are building the coordinate system for machine intelligence."
   },
   { 
     id: "leadership", 
-    title: "03. Leadership", 
-    label: "EXPERTISE",
-    heading: "03. Leadership & Expertise",
-    intro: "The backbone of Godel Technologies is a unique fusion of high-level mathematics and veteran AI execution.",
-    quote: "At every wave of AI innovation, we haven't just been watching from the sidelines - we’ve been at the center of the storm. At Godel Technologies, we are engineering the spatial future."
+    title: "03. The Core", 
+    label: "ARCHITECTS",
+    heading: "03. Engineering the Future",
+    intro: "True spatial intelligence cannot be brute-forced with more data. It requires a flawless synthesis of veteran AI execution and elite mathematical rigor.",
+    quote: "While the rest of the industry is still learning how to prompt, we are already defining how AI manipulates the physical world."
   }
 ];
 
 export const LEADERSHIP_EXPERTISE = [
   {
-    title: "Founded by Vishwanath Venkat",
-    desc: "An IIT Madras alumnus with a research-based Master’s in Computational Geometry, Vishwanath brings a rigorous mathematical approach to spatial problems.",
-    icon: "Layers"
+    title: "Vishwanath Venkat",
+    role: "Founder & Lead Architect",
+    desc: "An IIT Madras alumnus with a research-led Master’s in Computational Geometry. Vishwanath brings surgical mathematical precision to spatial computing challenges, translating theoretical geometry into deployable industrial AI.",
+    icon: "Network"
   },
   {
-    title: "A Decade of AI Mastery",
-    desc: "With over 10 years of experience leading technology for various startups, Vishwanath has a proven track record of taking products from raw concepts to market dominance.",
+    title: "A Decade at the Bleeding Edge",
+    role: "Execution & Scaling",
+    desc: "With 10+ years driving technological strategy for high-growth startups, Vishwanath bridges the gap between raw algorithmic power and market-dominating product architecture.",
     icon: "Activity"
   },
   {
-    title: "Deep Domain Knowledge",
-    desc: "Our edge lies in the intersection of CAD algorithms and modern machine learning. While others are just learning to prompt, we define how AI interacts with the physical world.",
+    title: "The Godel Edge",
+    role: "Domain Advantage",
+    desc: "Our competitive moat lies strictly at the intersection of complex CAD algorithms and modern machine learning—a highly specialized niche where generic AI models categorically fail.",
     icon: "Cpu"
   }
 ];
