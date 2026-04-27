@@ -31,7 +31,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         id: "gen-4",
         question: "Show me an example",
-        answer: "To be updated"
+        answer: "https://www.youtube.com/watch?v=APVdaQKvoyg"
       },
       {
         id: "gen-5",
@@ -56,7 +56,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         id: "serv-3",
         question: "What Industries have you worked with",
-        answer: "To be updated"
+        answer: "Architecture, Agritech, and a few more"
       }
     ]
   },
@@ -65,8 +65,8 @@ export const FAQ_DATA: FAQCategory[] = [
     items: [
       {
         id: "tech-1",
-        question: "What technologies do you use",
-        answer: "To be updated"
+        question: "How will you integrate your solution with our current system: ",
+        answer: "SaaS product, on-premise tool based on your "
       },
       {
         id: "tech-2",

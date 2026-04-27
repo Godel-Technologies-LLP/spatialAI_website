@@ -8,7 +8,7 @@ export const Metrics = () => {
   return (
     <section id="metrics" className="px-6 md:px-12 py-12">
       <div className="max-w-7xl mx-auto">
-        <div className="bg-black text-white rounded-[40px] p-12 md:p-20 grid grid-cols-2 lg:grid-cols-4 gap-12">
+        <div className="bg-black text-white rounded-[40px] p-8 md:p-20 grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
           {HOME_METRICS.map((m, i) => (
             <motion.div 
               key={m.label}

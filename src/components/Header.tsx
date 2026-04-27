@@ -94,7 +94,7 @@ const Header = () => {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="absolute top-full left-0 right-0 bg-white border-b border-gray-100 p-6 flex flex-col gap-4 md:hidden shadow-2xl"
+            className="absolute top-full left-0 right-0 bg-white border-b border-gray-100 p-6 flex flex-col gap-4 md:hidden shadow-2xl z-50"
           >
             {navLinks.map((link) => {
                const isInternal = link.href.startsWith("/#");
@@ -122,7 +122,7 @@ const Header = () => {
               href={SOCIAL_LINKS.CALENDLY} 
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-black text-white px-6 py-4 rounded-xl text-center font-medium shadow-lg shadow-black/10"
+              className="bg-black text-white px-6 py-3 rounded-xl text-center font-medium shadow-lg shadow-black/10"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Partner with Us

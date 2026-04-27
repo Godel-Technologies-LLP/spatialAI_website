@@ -79,7 +79,7 @@ const OurStory = () => {
               <span className="w-8 h-[2px] bg-[#FF4A22]"></span>
               <span className="text-[#FF4A22] text-[10px] md:text-xs font-mono font-bold tracking-[0.3em] uppercase">Manifesto</span>
             </div>
-            <h1 className="text-5xl sm:text-6xl md:text-8xl lg:text-[110px] font-headline font-medium tracking-tighter text-black leading-[0.85] uppercase mb-8 md:mb-12 break-words">
+            <h1 className="text-4xl sm:text-6xl md:text-8xl lg:text-[110px] font-headline font-medium tracking-tighter text-black leading-[0.85] uppercase mb-8 md:mb-12 break-words hyphens-auto">
               Architecting <br/> The Physical <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-black to-gray-500">Frontier.</span>
             </h1>
           </motion.div>
@@ -102,7 +102,7 @@ const OurStory = () => {
                   <span className="w-2 h-2 bg-black rounded-full" /> 
                   {STORY_CHAPTERS[0].label}
                 </div>
-                <h2 className="text-4xl md:text-5xl font-headline tracking-tighter mb-12 uppercase leading-none">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-headline tracking-tighter mb-12 uppercase leading-none break-words hyphens-auto">
                   {STORY_CHAPTERS[0].heading}
                 </h2>
                 <div className="space-y-8 text-xl font-serif text-gray-600 leading-relaxed">
@@ -137,7 +137,7 @@ const OurStory = () => {
                   <span className="animate-pulse w-3 h-3 bg-[#FF4A22] rounded-sm" /> 
                   {STORY_CHAPTERS[1].label}
                 </div>
-                <h2 className="text-4xl sm:text-5xl md:text-7xl font-headline tracking-tighter mb-8 md:mb-12 uppercase leading-none text-white break-words">
+                <h2 className="text-3xl sm:text-4xl md:text-7xl font-headline tracking-tighter mb-8 md:mb-12 uppercase leading-none text-white break-words hyphens-auto">
                   {STORY_CHAPTERS[1].heading}
                 </h2>
                 
@@ -158,7 +158,7 @@ const OurStory = () => {
                 <span className="w-2 h-2 bg-black rounded-full" /> 
                 {STORY_CHAPTERS[2].label}
               </div>
-              <h2 className="text-4xl md:text-6xl font-headline tracking-tighter mb-6 md:mb-8 uppercase leading-none">
+              <h2 className="text-3xl sm:text-4xl md:text-6xl font-headline tracking-tighter mb-6 md:mb-8 uppercase leading-none break-words hyphens-auto">
                 {STORY_CHAPTERS[2].heading}
               </h2>
               <p className="text-xl md:text-2xl font-serif text-gray-600 mb-12 md:mb-20 max-w-2xl leading-relaxed">

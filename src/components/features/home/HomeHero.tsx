@@ -93,12 +93,12 @@ export const CTA = () => {
   return (
     <section id="contact" className="px-6 md:px-12 py-24">
       <div className="max-w-7xl mx-auto">
-        <motion.div whileHover={{ scale: 0.99 }} className="bg-black text-white rounded-[60px] p-12 md:p-32 text-center relative overflow-hidden group cursor-pointer">
+        <motion.div whileHover={{ scale: 0.99 }} className="bg-black text-white rounded-[40px] md:rounded-[60px] px-6 py-16 md:p-32 text-center relative overflow-hidden group cursor-pointer">
           <div className="relative z-10">
-            <h2 className="text-5xl md:text-8xl font-medium tracking-tighter mb-12 text-balance leading-[0.9]">
+            <h2 className="text-4xl md:text-8xl font-medium tracking-tighter mb-12 text-balance leading-[0.9] break-words">
               Stop Drafting. <br/> Start Engineering.
             </h2>
-            <a href={SOCIAL_LINKS.CALENDLY} target="_blank" rel="noopener noreferrer" className="bg-white text-black px-12 py-6 rounded-full font-medium text-xl hover:scale-110 transition-transform active:scale-95 inline-block text-center">
+            <a href={SOCIAL_LINKS.CALENDLY} target="_blank" rel="noopener noreferrer" className="bg-white text-black px-8 py-4 md:px-12 md:py-6 rounded-full font-medium text-lg md:text-xl hover:scale-110 transition-transform active:scale-95 inline-block text-center break-words max-w-full">
               Collaborate & Scale your Vision
             </a>
           </div>

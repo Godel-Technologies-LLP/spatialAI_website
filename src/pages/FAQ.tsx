@@ -4,33 +4,50 @@ import { motion, AnimatePresence } from 'motion/react';
 import { FAQ_DATA, FAQItem } from '../data/faq';
 
 const AccordionItem = ({ item, isOpen, onClick }: { item: FAQItem; isOpen: boolean; onClick: () => void }) => {
+  const getYoutubeId = (url: string) => {
+    const match = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
+    return match ? match[1] : null;
+  };
+
+  const videoId = getYoutubeId(item.answer);
+
   return (
-    <div className="border-b border-black/10 last:border-none hover:bg-black/[0.02] transition-colors duration-300">
+    <div className="border-b border-black/10 last:border-none hover:bg-black/[0.02] transition-colors duration-300 px-4">
       <button
         onClick={onClick}
-        className="w-full flex items-start py-8 px-4 text-left group transition-colors"
+        className="w-full flex items-start py-8 text-left group transition-colors"
       >
-        <div className="flex-1">
-          <h4 className={`text-lg md:text-[22px] tracking-tight transition-colors ${isOpen ? 'text-black' : 'text-black/80 group-hover:text-black'}`}>
-            {item.question}
-          </h4>
-          <AnimatePresence initial={false}>
-            {isOpen && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.3, ease: 'easeOut' }}
-                className="overflow-hidden"
-              >
-                <div className="pt-6 text-black/60 text-sm md:text-base leading-relaxed max-w-4xl pr-12">
-                  {item.answer}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+        <h4 className={`text-lg md:text-[22px] tracking-tight transition-colors flex-1 ${isOpen ? 'text-black' : 'text-black/80 group-hover:text-black'}`}>
+          {item.question}
+        </h4>
       </button>
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
+            className="overflow-hidden"
+          >
+            <div className="pb-8 text-black/60 text-sm md:text-base leading-relaxed max-w-4xl pr-12">
+              {videoId ? (
+                <div className="relative w-full max-w-3xl pt-[56.25%] rounded-xl overflow-hidden shadow-xl border border-black/10 bg-black/5">
+                  <iframe
+                    className="absolute top-0 left-0 w-full h-full"
+                    src={`https://www.youtube.com/embed/${videoId}`}
+                    title="YouTube video player"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  ></iframe>
+                </div>
+              ) : (
+                item.answer
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
