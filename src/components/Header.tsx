@@ -5,6 +5,9 @@ import { Link, useLocation } from "react-router-dom";
 import { SOCIAL_LINKS } from "../constants/links";
 import logo from "../assets/logo.png";
 
+import { NAV_LINKS } from "../data/navigation";
+import { SITE_CONFIG } from "../data/config";
+
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -16,13 +19,7 @@ const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const navLinks = [
-    { name: "Home", href: "/" },
-    { name: "Solutions", href: "/solutions" },
-    { name: "Case Studies", href: "/casestudies" },
-    { name: "Our Story", href: "/ourstory" },
-    { name: "FAQ", href: "/faq" },
-  ];
+  const navLinks = NAV_LINKS;
 
   const isActive = (path: string) => {
     if (path.startsWith("/#")) {
@@ -70,7 +67,8 @@ const Header = () => {
             );
           })}
           <a 
-            href={SOCIAL_LINKS.CALENDLY}            target="_blank"
+            href={SITE_CONFIG.calendlyLink}
+            target="_blank"
             rel="noopener noreferrer"
             className="bg-black text-white px-6 py-2.5 rounded-full text-sm font-medium hover:bg-black/80 transition-all active:scale-95 shadow-lg shadow-black/10"
           >
@@ -118,7 +116,7 @@ const Header = () => {
               );
             })}
             <a 
-              href={SOCIAL_LINKS.CALENDLY} 
+              href={SITE_CONFIG.calendlyLink} 
               target="_blank"
               rel="noopener noreferrer"
               className="bg-black text-white px-6 py-3 rounded-xl text-center font-medium shadow-lg shadow-black/10"

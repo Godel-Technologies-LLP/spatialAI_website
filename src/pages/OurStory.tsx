@@ -3,7 +3,8 @@ import { motion, useScroll, useTransform } from "motion/react";
 import * as LucideIcons from "lucide-react";
 import Layout from "../components/layout/Layout";
 import StoryVisual from "../components/features/visuals/StoryVisual";
-import { STORY_CHAPTERS, LEADERSHIP_EXPERTISE } from "../data/story";
+import { STORY_CHAPTERS, LEADERSHIP_EXPERTISE, STORY_MANIFESTO } from "../data/story";
+import { SITE_CONFIG } from "../data/config";
 
 const OurStory = () => {
   const [activeSection, setActiveSection] = useState("genesis");
@@ -77,10 +78,10 @@ const OurStory = () => {
           >
             <div className="flex items-center gap-4 mb-6 md:mb-8">
               <span className="w-8 h-[2px] bg-[#FF4A22]"></span>
-              <span className="text-[#FF4A22] text-[10px] md:text-xs font-mono font-bold tracking-[0.3em] uppercase">Manifesto</span>
+              <span className="text-[#FF4A22] text-[10px] md:text-xs font-mono font-bold tracking-[0.3em] uppercase">{STORY_MANIFESTO.label}</span>
             </div>
             <h1 className="text-4xl sm:text-6xl md:text-8xl lg:text-[110px] font-headline font-medium tracking-tighter text-black leading-[0.85] uppercase mb-8 md:mb-12 break-words hyphens-auto">
-              Architecting <br/> The Physical <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-black to-gray-500">Frontier.</span>
+              {STORY_MANIFESTO.heading.split(' ').slice(0, -1).join(' ')} <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-black to-gray-500">{STORY_MANIFESTO.heading.split(' ').slice(-1)}</span>
             </h1>
           </motion.div>
         </section>
@@ -194,8 +195,8 @@ const OurStory = () => {
                         <>
                           <div className="lg:col-span-1 border-r border-gray-200/50 pr-8">
                             <div className="text-[10px] text-gray-400 font-mono tracking-widest uppercase mb-4">Core Architect</div>
-                            {item.link ? (
-                              <a href={item.link} target="_blank" rel="noopener noreferrer" className="inline-block hover:text-[#FF4A22] transition-colors">
+                            {item.link || (isMain && SITE_CONFIG.founder.linkedin) ? (
+                              <a href={item.link || SITE_CONFIG.founder.linkedin} target="_blank" rel="noopener noreferrer" className="inline-block hover:text-[#FF4A22] transition-colors">
                                 <h3 className="text-3xl font-headline tracking-tighter uppercase mb-2">{item.title}</h3>
                               </a>
                             ) : (

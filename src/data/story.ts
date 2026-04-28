@@ -1,3 +1,8 @@
+export const STORY_MANIFESTO = {
+  label: "Manifesto",
+  heading: "Architecting The Physical Frontier."
+};
+
 export const STORY_CHAPTERS = [
   { 
     id: "genesis", 

@@ -1,6 +1,10 @@
 export const HOME_HERO = {
   heading: "Your Strategic Partner for AI-Driven Spatial Intelligence Solutions",
-  subheading: "We convert complex spatial technology into measurable business outcomes for founders and leaders."
+  subheading: "We convert complex spatial technology into measurable business outcomes for founders and leaders.",
+  cta: {
+    heading: "Stop Drafting. \n Start Engineering.",
+    button: "Collaborate & Scale your Vision"
+  }
 };
 
 export const HOME_METRICS = [
