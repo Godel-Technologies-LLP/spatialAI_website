@@ -38,10 +38,9 @@ const Header = () => {
       }`}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Link to="/" className="flex items-center gap-3 group transition-transform hover:scale-105 bg-white rounded-xl px-3 py-1.5 shadow-sm border border-gray-100/50">
-            <img src={logo} alt="Godel Technologies Logo" className="w-8 h-8 object-contain" />
-            <span className="text-xl font-medium tracking-tighter text-black whitespace-nowrap">Godel Technologies</span>
+        <div className="flex items-center">
+          <Link to="/" className="flex items-center transition-transform hover:scale-105">
+            <img src="/logo_full.png" alt="Godel Technologies Logo" className="h-12 w-auto object-contain" />
           </Link>
         </div>
 

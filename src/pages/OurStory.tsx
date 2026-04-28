@@ -69,7 +69,7 @@ const OurStory = () => {
       <main className="bg-white min-h-screen pb-32">
         
         {/* Massive Hero */}
-        <section className="pt-32 md:pt-48 px-6 md:px-12 lg:px-32 xl:px-48 max-w-7xl mx-auto relative z-10 mb-16 md:mb-32">
+        <section className="pt-24 md:pt-48 px-6 md:px-12 lg:px-32 xl:px-48 max-w-7xl mx-auto relative z-10 mb-8 md:mb-32">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
@@ -89,8 +89,17 @@ const OurStory = () => {
         <div className="border-l border-gray-100/50 max-w-7xl mx-auto lg:pl-32 xl:pl-48">
           
           {/* Chapter 1: Genesis */}
-          <section id="genesis" className="px-6 md:px-12 py-24 md:py-32 relative">
-            <div className="grid lg:grid-cols-2 gap-16 items-start">
+          <section id="genesis" className="px-6 md:px-12 py-16 md:py-32 relative">
+            <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+              {/* Mobile Illustration */}
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                className="lg:hidden h-[300px] w-full rounded-[32px] overflow-hidden shadow-xl mb-12 border border-black/5"
+              >
+                <StoryVisual />
+              </motion.div>
               <motion.div 
                 initial={{ opacity: 0, x: -50 }}
                 whileInView={{ opacity: 1, x: 0 }}
@@ -185,7 +194,13 @@ const OurStory = () => {
                         <>
                           <div className="lg:col-span-1 border-r border-gray-200/50 pr-8">
                             <div className="text-[10px] text-gray-400 font-mono tracking-widest uppercase mb-4">Core Architect</div>
-                            <h3 className="text-3xl font-headline tracking-tighter uppercase mb-2">{item.title}</h3>
+                            {item.link ? (
+                              <a href={item.link} target="_blank" rel="noopener noreferrer" className="inline-block hover:text-[#FF4A22] transition-colors">
+                                <h3 className="text-3xl font-headline tracking-tighter uppercase mb-2">{item.title}</h3>
+                              </a>
+                            ) : (
+                              <h3 className="text-3xl font-headline tracking-tighter uppercase mb-2">{item.title}</h3>
+                            )}
                             <div className="text-[#FF4A22] text-sm font-bold uppercase tracking-widest">{item.role}</div>
                           </div>
                           <div className="lg:col-span-2">

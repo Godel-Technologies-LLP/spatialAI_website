@@ -101,7 +101,7 @@ export const SolutionsFilter = ({ filters, selected, onUpdate, onClear }: Soluti
 
   return (
     <div className="w-full mb-16">
-      <div className="flex flex-col lg:flex-row gap-8 items-end">
+      <div className="flex flex-col lg:flex-row gap-8 items-stretch lg:items-end w-full">
         <FilterDropdown
           label="Skills"
           placeholder="Select Skills"

@@ -1,21 +1,9 @@
 import Layout from '../components/layout/Layout';
 import { CASE_STUDY_LINKS } from '../constants/links';
 import { Link } from 'react-router-dom';
-import { ChevronDown } from 'lucide-react';
 
-const FilterDropdown = ({ label, placeholder }: { label: string; placeholder: string }) => (
-  <div className="flex flex-col gap-2 w-full md:w-72">
-    <label className="text-[10px] font-label uppercase tracking-widest text-gray-400 font-bold ml-1">
-      {label}
-    </label>
-    <div className="relative">
-      <select className="w-full appearance-none bg-white border border-gray-100 rounded-2xl px-6 py-4 text-sm font-medium text-gray-600 focus:outline-none focus:ring-2 focus:border-gray-200 cursor-pointer hover:border-gray-200 transition-colors shadow-sm font-sans">
-        <option value="">{placeholder}</option>
-      </select>
-      <ChevronDown className="absolute right-5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-    </div>
-  </div>
-);
+
+
 
 const CaseStudies = () => {
   const cases = [
@@ -29,16 +17,16 @@ const CaseStudies = () => {
     },
     {
       title: "Digitising Farmlands: Building a Unified Geo-spatial Repository for Policy-Driven Agriculture",
-      link: CASE_STUDY_LINKS.FARMLANDS,
-      isInternal: false,
+      link: "/casestudies/digitising-farmlands",
+      isInternal: true,
       date: "Jul 29, 2025 • 3 min read",
       author: "Admin Godel",
       image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=2000"
     },
     {
       title: "Conversational AI for Floor Plan Customisation",
-      link: CASE_STUDY_LINKS.CONVERSATION,
-      isInternal: false,
+      link: "/casestudies/conversational-ai",
+      isInternal: true,
       date: "Apr 21, 2025 • 4 min read",
       author: "Admin Godel",
       image: "https://lh3.googleusercontent.com/aida-public/AB6AXuD9rv_o8H34pOnvCIOYo0iCHBOLMIko7zK1P1OpuqsMJbUN_b1vsSJB0QvcJrkUaSJueKysvyIqm3132Co5DMhhTleB8Qilf3SENuXU6s6Y84U2CL490U8mUT09G8wpNq84bkLibmijC46dGJ8Mj19rq_8mHEIaZaW1qjzuhhIyVUjBD381baPSgKveuohFeynPxChs9rafr7Mplo1dmkjl49AuEEOobzza6nqo92PxUemwU9WCMK6Rl8m6SmFI6Y5IYf1VXSN0951J"
@@ -78,12 +66,7 @@ const CaseStudies = () => {
             </div>
           </header>
 
-          {/* Filters Section */}
-          <section className="flex flex-col md:flex-row gap-6 md:gap-8 mb-16 pb-12 border-b border-gray-100">
-            <FilterDropdown label="Skills" placeholder="Select Skills" />
-            <FilterDropdown label="Industry Verticals" placeholder="Select Industry Verticals" />
-            <FilterDropdown label="Application" placeholder="Select Application" />
-          </section>
+
 
           {/* Case Studies Grid */}
           <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 mb-24">

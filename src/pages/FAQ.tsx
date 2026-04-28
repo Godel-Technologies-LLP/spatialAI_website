@@ -42,7 +42,7 @@ const AccordionItem = ({ item, isOpen, onClick }: { item: FAQItem; isOpen: boole
                   ></iframe>
                 </div>
               ) : (
-                item.answer
+                <div dangerouslySetInnerHTML={{ __html: item.answer }} className="space-y-4" />
               )}
             </div>
           </motion.div>
@@ -81,52 +81,58 @@ const FAQ = () => {
             </h1>
           </div>
 
-          {/* Tabs Nav */}
-          <div className="flex overflow-x-auto hide-scrollbar mb-12 relative border-b border-black/10">
-            {FAQ_DATA.map((category) => (
-              <button
-                key={category.title}
-                onClick={() => {
-                  setActiveCategory(category.title);
-                  setOpenItems(new Set()); // Close accordions on tab switch
-                }}
-                className={`relative px-8 py-5 text-sm md:text-base whitespace-nowrap transition-colors ${
-                  activeCategory === category.title
-                    ? 'text-[#FF4A22]' // Bright red-orange from screenshot
-                    : 'text-black/50 hover:text-black'
-                }`}
-              >
-                {category.title}
-                {activeCategory === category.title && (
-                  <motion.div
-                    layoutId="faqTab"
-                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#FF4A22]"
-                  />
-                )}
-              </button>
-            ))}
-          </div>
-
-          {/* Questions Content */}
-          <div className="space-y-0">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeCategory}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.3 }}
-              >
-                {activeData?.items.map(item => (
-                  <AccordionItem 
-                    key={item.id} 
-                    item={item} 
-                    isOpen={openItems.has(item.id)}
-                    onClick={() => toggleItem(item.id)}
-                  />
+          <div className="flex flex-col md:flex-row gap-12 lg:gap-24">
+            {/* Sidebar / Categories */}
+            <div className="w-full md:w-1/3 lg:w-1/4 shrink-0">
+              <div className="md:sticky md:top-32 flex flex-row flex-wrap md:flex-col gap-2 pb-4 md:pb-0 border-b md:border-b-0 border-black/10 md:pr-4">
+                {FAQ_DATA.map((category) => (
+                  <button
+                    key={category.title}
+                    onClick={() => {
+                      setActiveCategory(category.title);
+                      setOpenItems(new Set()); // Close accordions on tab switch
+                    }}
+                    className={`relative text-left px-4 md:px-5 py-2.5 md:py-4 rounded-xl text-sm md:text-base transition-all duration-300 group flex items-center justify-between ${
+                      activeCategory === category.title
+                        ? 'bg-white text-black font-medium shadow-sm border border-black/5'
+                        : 'bg-black/5 md:bg-transparent text-black/60 hover:bg-black/10 md:hover:bg-black/5 hover:text-black border border-transparent'
+                    }`}
+                  >
+                    <span>{category.title}</span>
+                    {activeCategory === category.title && (
+                      <motion.div
+                        layoutId="activeIndicator"
+                        className="hidden md:block w-1.5 h-1.5 rounded-full bg-[#FF4A22]"
+                      />
+                    )}
+                  </button>
                 ))}
-              </motion.div>
-            </AnimatePresence>
+              </div>
+            </div>
+
+            {/* Questions Content */}
+            <div className="flex-1 w-full">
+              <div className="space-y-0">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeCategory}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {activeData?.items.map(item => (
+                      <AccordionItem 
+                        key={item.id} 
+                        item={item} 
+                        isOpen={openItems.has(item.id)}
+                        onClick={() => toggleItem(item.id)}
+                      />
+                    ))}
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+            </div>
           </div>
         </div>
       </div>

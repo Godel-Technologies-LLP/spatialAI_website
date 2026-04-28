@@ -89,15 +89,23 @@ const Solutions = () => {
       <div className="pt-32 pb-32 min-h-screen bg-brand-gray/30">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
           {/* Header */}
-          <div className="mb-20">
-            <TechnicalLabel className="mb-4 opacity-40">System Logic</TechnicalLabel>
-            <h1 className="text-4xl md:text-7xl font-medium tracking-tighter mb-8 uppercase leading-none">
-              Industrial <br /> Solutions
-            </h1>
-            <p className="text-lg md:text-xl text-black/40 max-w-xl font-medium">
-              Filter through our expertise across technical domains, industry verticals, and specific algorithmic applications.
-            </p>
-          </div>
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-20">
+              <div className="max-w-2xl">
+                <TechnicalLabel className="mb-4 opacity-40">System Logic</TechnicalLabel>
+                <h1 className="text-4xl md:text-7xl font-medium tracking-tighter uppercase leading-none">
+                  Industrial <br /> Solutions
+                </h1>
+                <p className="text-lg md:text-xl text-black/40 mt-8 font-medium">
+                  Filter through our expertise across technical domains, industry verticals, and specific algorithmic applications.
+                </p>
+              </div>
+              <div className="hidden md:block">
+                <div className="px-6 py-3 border border-black/10 rounded-full flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full bg-[#FF4A22] animate-pulse" />
+                  <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-black">To Be Updated</span>
+                </div>
+              </div>
+            </div>
 
           {/* Filters */}
           <SolutionsFilter
@@ -124,9 +132,20 @@ const Solutions = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 20 }}
-                  className="flex flex-col items-center justify-center py-32 text-center"
+                  className="flex flex-col items-center justify-center py-40 text-center relative overflow-hidden rounded-[40px] border border-black/5 bg-white shadow-sm"
                 >
-                  <h3 className="text-xl font-medium tracking-[0.3em] uppercase text-black/40">To be updated</h3>
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-black/[0.02] via-transparent to-transparent pointer-events-none" />
+                  <div className="relative z-10">
+                    <span className="inline-block px-4 py-1.5 bg-black text-white text-[10px] font-bold uppercase tracking-[0.2em] rounded-full mb-8">System Status</span>
+                    <h3 className="text-4xl md:text-6xl font-medium tracking-tighter uppercase mb-6">Database <br/> Expanding</h3>
+                    <p className="text-black/40 text-lg md:text-xl font-medium max-w-md mx-auto">
+                      Our repository of industrial solutions is currently being digitized and indexed for public release.
+                    </p>
+                    <div className="mt-12 flex items-center justify-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-[#FF4A22] animate-pulse" />
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-black/60">Live Updates in progress</span>
+                    </div>
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>

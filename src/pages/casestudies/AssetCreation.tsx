@@ -332,10 +332,50 @@ const ConclusionContent = () => (
       By transforming a rigid, inefficient script into a modular and intelligent framework, we delivered immediate and substantial value to the client. The project not only achieved its primary objectives of reducing compute and operator time but also established a robust, scalable foundation for future innovation. The next steps could involve integrating machine learning to predict optimal parameters based on initial video quality analysis, further reducing the need for any human-guided experimentation and moving towards a fully autonomous system.
     </p>
 
-    <div className="pt-12 mt-16 border-t border-gray-200 font-sans text-center md:text-left">
+    <div className="pt-12 mt-16 border-t border-gray-200 font-sans">
       <h2 className="text-2xl md:text-3xl font-headline font-black uppercase text-black mb-2 tracking-tighter">Appendix</h2>
-      <p className="text-gray-500 font-serif italic max-w-md">Step-wise Time Distribution and Failure Rates detailed metrics.</p>
-      <button className="mt-6 px-8 py-3 bg-white border border-gray-300 text-black font-label text-xs uppercase tracking-widest hover:bg-black hover:text-white transition-colors rounded-full">Download PDF</button>
+      <p className="text-gray-500 font-serif italic mb-10">Step-wise Time Distribution and Failure Rates detailed metrics.</p>
+      
+      <div className="overflow-x-auto rounded-2xl border border-gray-100 shadow-sm">
+        <table className="w-full text-left border-collapse bg-white">
+          <thead>
+            <tr className="bg-gray-50 border-b border-gray-100">
+              <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-black/40">Pipeline Step</th>
+              <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-black/40">Typical Time %</th>
+              <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-black/40">Failure Rate</th>
+              <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-black/40">Computational Intensity</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-50">
+            {[
+              { step: 'Feature Detection', time: '10-15%', failure: '~5%', intensity: 'Low-Medium' },
+              { step: 'Feature Matching', time: '15-20%', failure: '~15-20%', intensity: 'Medium' },
+              { step: 'Sparse Cloud', time: '15-20%', failure: '~10-15%', intensity: 'Medium' },
+              { step: 'Depth Map', time: '20-25%', failure: '~10%', intensity: 'High' },
+              { step: 'Dense Reconstruction', time: '25-35%', failure: '~8-10%', intensity: 'Very High' },
+              { step: 'Model Builder', time: '10-15%', failure: '~5%', intensity: 'Medium' },
+            ].map((row, i) => (
+              <tr key={i} className="hover:bg-gray-50/50 transition-colors">
+                <td className="px-6 py-4 text-sm font-bold text-black">{row.step}</td>
+                <td className="px-6 py-4 text-sm text-gray-500">{row.time}</td>
+                <td className="px-6 py-4 text-sm text-gray-500">{row.failure}</td>
+                <td className="px-6 py-4">
+                  <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${
+                    row.intensity === 'Very High' ? 'bg-red-50 text-red-600' :
+                    row.intensity === 'High' ? 'bg-orange-50 text-orange-600' :
+                    row.intensity === 'Medium' ? 'bg-blue-50 text-blue-600' :
+                    'bg-green-50 text-green-600'
+                  }`}>
+                    {row.intensity}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+
     </div>
   </div>
 );
@@ -382,22 +422,22 @@ const AssetCreation = () => {
             {/* Vertical Navigation Sidebar */}
             <div className="md:w-1/4">
               {/* Sticky container offset from top to account for header */}
-              <div className="md:sticky top-32 flex overflow-x-auto md:flex-col hide-scrollbar border-b md:border-b-0 md:border-l border-gray-200 pb-2 md:pb-0">
+              <div className="md:sticky top-32 flex flex-row flex-wrap md:flex-col gap-2 md:gap-0 hide-scrollbar pb-6 md:pb-0 md:border-l border-gray-200">
                 {SECTIONS.map((section) => (
                   <button
                     key={section.id}
                     onClick={() => setActiveTab(section.id)}
-                    className={`relative text-left px-6 py-4 md:py-5 font-label text-[10px] md:text-xs uppercase tracking-[0.2em] whitespace-nowrap transition-all duration-300 ${
+                    className={`relative text-left px-4 md:px-6 py-2.5 md:py-5 font-label text-[10px] md:text-xs uppercase tracking-[0.1em] md:tracking-[0.2em] transition-all duration-300 rounded-xl md:rounded-none ${
                       activeTab === section.id
-                        ? 'text-black font-bold'
-                        : 'text-gray-400 hover:text-black hover:pl-8'
+                        ? 'bg-white md:bg-transparent text-black font-bold shadow-sm md:shadow-none border border-black/5 md:border-transparent'
+                        : 'bg-black/5 md:bg-transparent text-gray-500 hover:text-black hover:bg-black/10 md:hover:bg-transparent md:hover:pl-8 border border-transparent'
                     }`}
                   >
                     {section.title}
                     {activeTab === section.id && (
                       <motion.div
                         layoutId="caseStudyActiveTab"
-                        className="absolute bottom-0 left-0 right-0 h-0.5 md:h-full md:w-[3px] md:top-0 md:left-[-1.5px] bg-[#FF4A22]"
+                        className="hidden md:block absolute h-full w-[3px] top-0 left-[-1.5px] bg-[#FF4A22]"
                       />
                     )}
                   </button>

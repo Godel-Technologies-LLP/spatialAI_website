@@ -33,7 +33,8 @@ export const LEADERSHIP_EXPERTISE = [
     title: "Vishwanath Venkat",
     role: "Founder & Lead Architect",
     desc: "An IIT Madras alumnus with a research-led Master’s in Computational Geometry. Vishwanath brings surgical mathematical precision to spatial computing challenges, translating theoretical geometry into deployable industrial AI.",
-    icon: "Network"
+    icon: "Network",
+    link: "https://www.linkedin.com/in/vishwanathvenkat/"
   },
   {
     title: "A Decade at the Bleeding Edge",
