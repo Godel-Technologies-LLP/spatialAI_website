@@ -172,6 +172,25 @@ const Products = () => {
                 </p>
               </div>
             </div>
+
+            {/* YouTube Video Embed */}
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="mt-20 relative aspect-video rounded-[32px] overflow-hidden shadow-2xl border border-black/5 bg-black"
+            >
+              <iframe 
+                width="100%" 
+                height="100%" 
+                src="https://www.youtube.com/embed/APVdaQKvoyg" 
+                title="Geometry to Text Engine Demo" 
+                frameBorder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                allowFullScreen
+                className="absolute inset-0"
+              ></iframe>
+            </motion.div>
           </div>
         </section>
 
