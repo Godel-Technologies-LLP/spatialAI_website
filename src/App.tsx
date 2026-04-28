@@ -5,6 +5,7 @@ import Solutions from "./pages/Solutions";
 import CaseStudies from "./pages/CaseStudies";
 import OurStory from "./pages/OurStory";
 import FAQ from "./pages/FAQ";
+import Products from "./pages/Products";
 import AssetCreation from "./pages/casestudies/AssetCreation";
 import DigitisingFarmlands from "./pages/casestudies/DigitisingFarmlands";
 import ConversationalAI from "./pages/casestudies/ConversationalAI";
@@ -26,6 +27,7 @@ function App() {
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/products" element={<Products />} />
         <Route path="/solutions" element={<Solutions />} />
         <Route path="/casestudies" element={<CaseStudies />} />
         <Route path="/casestudies/asset-creation" element={<AssetCreation />} />
