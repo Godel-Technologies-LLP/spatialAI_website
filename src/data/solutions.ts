@@ -43,3 +43,4 @@ export interface SolutionProject {
 }
 
 export const SOLUTIONS_DATA: SolutionProject[] = [];
+// Add new solutions here. Each entry will automatically appear as a card on the Industrial Solutions page.

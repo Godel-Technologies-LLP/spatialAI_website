@@ -399,13 +399,13 @@ const AssetCreation = () => {
 
   return (
     <Layout>
-      <div className="pt-32 pb-32 min-h-screen bg-white">
+      <div className="pt-20 pb-32 min-h-screen bg-white">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
           
           <motion.div 
             initial={{ opacity: 0 }} 
             animate={{ opacity: 1 }} 
-            className="mb-12 mt-8 md:mb-16"
+            className="mb-12 md:mb-16"
           >
             <span className="text-[#FF4A22] text-[10px] md:text-xs uppercase tracking-[0.3em] font-label font-bold block mb-4">Case Study</span>
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-headline font-medium tracking-tighter leading-tight text-black mb-4 uppercase">
