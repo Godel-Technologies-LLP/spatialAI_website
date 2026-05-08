@@ -5,6 +5,7 @@ export interface Product {
   categoryStyles: string;
   name: string;
   iconId: string;
+  order?: number;
 }
 
 /**
@@ -19,8 +20,9 @@ const modules = import.meta.glob('../features/*/data/metadata.ts', {
 
 
 // Map the discovered modules into our product array and filter out any invalid entries or non-product features
-export const PRODUCTS_DATA: Product[] = Object.values(modules)
-  .filter((m: any) => m && m.path && m.path.startsWith('/products')) as Product[];
+export const PRODUCTS_DATA: Product[] = (Object.values(modules)
+  .filter((m: any) => m && m.path && m.path.startsWith('/products')) as Product[])
+  .sort((a, b) => (a.order ?? Number.POSITIVE_INFINITY) - (b.order ?? Number.POSITIVE_INFINITY));
 
 
 

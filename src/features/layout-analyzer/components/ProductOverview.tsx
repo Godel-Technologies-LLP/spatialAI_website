@@ -16,26 +16,17 @@ const ProductOverview = ({ content, onGo }: ProductOverviewProps) => {
       className="page-section"
     >
       <div className="wrap">
-        <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-black/40 mb-10">
-          <button onClick={() => onGo('product')} className="hover:text-black">Platform</button> 
-          <span className="opacity-30">/</span> 
-          <b className="text-black">{content.name}</b>
-        </div>
-        
         <div className="hero-grid">
           <div className="hero-header">
-            <div className="pill mb-6">{content.label}</div>
+            <div className="pill mb-4">{content.label}</div>
             <h1 dangerouslySetInnerHTML={{ __html: content.headline }} />
-            <p className="text-xl text-black/60 leading-relaxed max-w-xl mb-10">{content.subheadline}</p>
+            <p className="text-xl text-black/60 leading-relaxed max-w-xl mb-6">{content.subheadline}</p>
             <div className="flex gap-4 items-center">
-              <button 
+              <button
                 className="h-14 px-8 bg-black text-white rounded-full font-bold flex items-center gap-3 hover:bg-black/80 transition-colors"
                 onClick={() => onGo('upload')}
               >
                 {content.cta_primary} <span className="opacity-40">→</span>
-              </button>
-              <button className="h-14 px-8 border border-black/10 rounded-full font-bold hover:bg-black/5 transition-colors">
-                {content.cta_secondary}
               </button>
             </div>
           </div>
