@@ -36,7 +36,6 @@ const LayoutAnalyzer = () => {
     processFile,
     handleFileUpload,
     setCurrentPage,
-    API_BASE
   } = useLayoutAnalysis();
 
   return (
@@ -77,7 +76,6 @@ const LayoutAnalyzer = () => {
               isRealFile={isRealFile}
               onGo={go}
               onSetCurrentPage={setCurrentPage}
-              apiBase={API_BASE}
             />
           )}
         </AnimatePresence>

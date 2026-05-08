@@ -11,7 +11,6 @@ interface AnalysisResultsProps {
   isRealFile: boolean;
   onGo: (step: string) => void;
   onSetCurrentPage: (updater: (p: number) => number) => void;
-  apiBase: string;
 }
 
 const AnalysisResults = ({ 
@@ -20,8 +19,7 @@ const AnalysisResults = ({
   currentPage, 
   isRealFile, 
   onGo, 
-  onSetCurrentPage, 
-  apiBase 
+  onSetCurrentPage,
 }: AnalysisResultsProps) => {
 
   const renderDonut = (composition: any) => {
@@ -206,7 +204,7 @@ const AnalysisResults = ({
             </div>
             {isRealFile ? (
               <img 
-                src={`${apiBase}/thumbnail/${encodeURIComponent(currentResult.name)}/${currentPage}`}
+                src={currentResult.thumbnails?.[currentPage - 1] ?? currentResult.thumbnail}
                 alt={`Page ${currentPage}`}
                 className="max-h-[85%] max-w-[85%] object-contain shadow-2xl border border-black/10"
               />
