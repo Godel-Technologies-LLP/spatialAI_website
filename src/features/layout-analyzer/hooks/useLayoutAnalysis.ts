@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { SAMPLES } from "../data/mock";
 
-const API_BASE = import.meta.env.VITE_API_BASE ?? "";
+const API_BASE = "http://localhost:8000";
 
 export const useLayoutAnalysis = () => {
   const [currentStep, setCurrentStep] = useState('product'); // product, upload, analyzing, results
@@ -79,7 +79,7 @@ export const useLayoutAnalysis = () => {
     }, 200);
 
     try {
-      const response = await fetch(`${API_BASE}/api/analyze`, {
+      const response = await fetch(`${API_BASE}/analyze`, {
         method: 'POST',
         body: formData,
       });
@@ -102,7 +102,7 @@ export const useLayoutAnalysis = () => {
 
     } catch (err) {
       clearInterval(progressTimer);
-      alert('Error connecting to analysis engine. Please try again in a moment.');
+      alert('Error connecting to backend engine. Please ensure the server is running on port 8000.');
       go('upload');
     }
   }, [go]);
