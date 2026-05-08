@@ -1,16 +1,21 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
-import { useEffect } from "react";
-import Home from "./pages/Home";
-import Solutions from "./pages/Solutions";
-import CaseStudies from "./pages/CaseStudies";
-import OurStory from "./pages/OurStory";
-import FAQ from "./pages/FAQ";
-import Products from "./pages/Products";
-import LayoutAnalyzer from "./pages/products/LayoutAnalyzer";
-import GeometryToText from "./pages/products/GeometryToText";
-import AssetCreation from "./pages/casestudies/AssetCreation";
-import DigitisingFarmlands from "./pages/casestudies/DigitisingFarmlands";
-import ConversationalAI from "./pages/casestudies/ConversationalAI";
+import { useEffect, Suspense, lazy } from "react";
+import LoadingFallback from "./components/common/LoadingFallback";
+
+// Lazy-loaded pages
+const Home = lazy(() => import("./pages/Home"));
+const Solutions = lazy(() => import("./pages/Solutions"));
+const CaseStudies = lazy(() => import("./pages/CaseStudies"));
+const OurStory = lazy(() => import("./pages/OurStory"));
+const FAQ = lazy(() => import("./pages/FAQ"));
+const Products = lazy(() => import("./pages/Products"));
+
+// Lazy-loaded modules
+const LayoutAnalyzer = lazy(() => import("./features/layout-analyzer"));
+const GeometryToText = lazy(() => import("./features/geometry-to-text"));
+const AssetCreation = lazy(() => import("./features/asset-creation"));
+const DigitisingFarmlands = lazy(() => import("./features/digitising-farmlands"));
+const ConversationalAI = lazy(() => import("./features/conversational-ai"));
 
 // ScrollToTop component to ensure pages start at the top on navigation
 const ScrollToTop = () => {
@@ -27,21 +32,24 @@ function App() {
   return (
     <Router>
       <ScrollToTop />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/products" element={<Products />} />
-        <Route path="/products/layout-analyzer" element={<LayoutAnalyzer />} />
-        <Route path="/products/geometry-to-text" element={<GeometryToText />} />
-        <Route path="/solutions" element={<Solutions />} />
-        <Route path="/casestudies" element={<CaseStudies />} />
-        <Route path="/casestudies/asset-creation" element={<AssetCreation />} />
-        <Route path="/casestudies/digitising-farmlands" element={<DigitisingFarmlands />} />
-        <Route path="/casestudies/conversational-ai" element={<ConversationalAI />} />
-        <Route path="/ourstory" element={<OurStory />} />
-        <Route path="/faq" element={<FAQ />} />
-      </Routes>
+      <Suspense fallback={<LoadingFallback />}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/products/layout-analyzer" element={<LayoutAnalyzer />} />
+          <Route path="/products/geometry-to-text" element={<GeometryToText />} />
+          <Route path="/solutions" element={<Solutions />} />
+          <Route path="/casestudies" element={<CaseStudies />} />
+          <Route path="/casestudies/asset-creation" element={<AssetCreation />} />
+          <Route path="/casestudies/digitising-farmlands" element={<DigitisingFarmlands />} />
+          <Route path="/casestudies/conversational-ai" element={<ConversationalAI />} />
+          <Route path="/ourstory" element={<OurStory />} />
+          <Route path="/faq" element={<FAQ />} />
+        </Routes>
+      </Suspense>
     </Router>
   );
 }
 
 export default App;
+

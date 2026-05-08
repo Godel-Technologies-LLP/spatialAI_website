@@ -1,24 +1,25 @@
 import { motion } from "motion/react";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import Layout from "../components/layout/Layout";
-import { PRODUCTS_DATA } from "../data/products";
+import Layout from "../../components/layout/Layout";
+import { PRODUCTS_DATA } from "../../data/products";
+import IconResolver from "../../components/common/IconResolver";
 
 const Products = () => {
   return (
     <Layout>
       <main className="bg-white min-h-screen pt-24 pb-24">
-        
+
         {/* Header Section */}
         <section className="max-w-7xl mx-auto px-6 md:px-12 mb-10">
           <motion.header
-             initial={{ opacity: 0, y: 20 }}
-             animate={{ opacity: 1, y: 0 }}
-             transition={{ duration: 0.8 }}
-             className="max-w-3xl"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="max-w-3xl"
           >
             <h1 className="text-4xl md:text-6xl font-medium tracking-tighter uppercase leading-[0.9] mb-6">
-              Intelligence for <br/> <span className="text-black/40 font-light">Complex Documents</span>
+              Intelligence for <br /> <span className="text-black/40 font-light">Complex Documents</span>
             </h1>
             <p className="text-base md:text-lg text-black/60 font-medium max-w-xl">
               Explore our growing suite of spatial data extraction and analysis tools. Click a product to view specifications.
@@ -30,13 +31,13 @@ const Products = () => {
         <section className="max-w-7xl mx-auto px-6 md:px-12">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
             {PRODUCTS_DATA.map((product) => (
-              <Link 
+              <Link
                 key={product.id}
                 to={product.path}
                 className="flex flex-col justify-between border border-black/10 rounded-[24px] p-6 transition-all duration-500 hover:border-black/30 hover:shadow-xl bg-gray-50/30 hover:bg-white group"
               >
                 <div>
-                  {product.visual}
+                  <IconResolver iconId={product.iconId} />
                   <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest mb-3 ${product.categoryStyles}`}>
                     {product.category}
                   </div>
@@ -49,6 +50,7 @@ const Products = () => {
             ))}
           </div>
         </section>
+
 
       </main>
     </Layout>

@@ -1,0 +1,1940 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Document Layout Analyzer · Godel Technologies</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Manrope:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    --bg:        #ffffff;
+    --bg-soft:   #f6f6f4;
+    --bg-tile:   #f3f2ef;
+    --line:      #ececea;
+    --line-2:    #dcdbd6;
+    --ink:       #0c0c0d;
+    --ink-2:     #2a2a2c;
+    --ink-3:     #6b6b6d;
+    --ink-4:     #9a9a9c;
+    --accent:    #2a6fdb;
+    --accent-soft: #eaf0fb;
+    --good:      #1a8f4c;
+    --good-soft: #e6f4ec;
+    --warn:      #c2810c;
+    --warn-soft: #faf1e0;
+    --bad:       #c2410c;
+    --bad-soft:  #fbeae0;
+    --vec:       #2a6fdb;
+    --img:       #c2410c;
+    --txt:       #6b6b6d;
+    --hch:       #7a5af8;
+    --display:   'Outfit', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    --sans:      'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    --body:      'Manrope', ui-sans-serif, system-ui, sans-serif;
+    --tech:      'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+    --mono:      'Space Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    --maxw:      1280px;
+  }
+
+  html.dark {
+    --bg:        #0b0b0c;
+    --bg-soft:   #131315;
+    --bg-tile:   #16161a;
+    --line:      #232326;
+    --line-2:    #2c2c30;
+    --ink:       #f5f5f6;
+    --ink-2:     #d6d6d8;
+    --ink-3:     #97979b;
+    --ink-4:     #6b6b6f;
+    --accent:    #5b8def;
+    --accent-soft: #14223d;
+    --good-soft: #102a1c;
+    --warn-soft: #2a210e;
+    --bad-soft: #2a1610;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: var(--sans);
+    color: var(--ink);
+    background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    transition: background .2s ease, color .2s ease;
+  }
+  .mono { font-family: var(--mono); }
+  .display { font-family: var(--display); letter-spacing: -0.02em; }
+  .tech { font-family: var(--tech); letter-spacing: 0.01em; }
+
+  /* ───────── Top nav ───────── */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter: blur(14px) saturate(150%);
+    -webkit-backdrop-filter: blur(14px) saturate(150%);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-inner {
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 16px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo-mark {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    display: grid; place-items: center;
+    color: var(--ink);
+    background: var(--bg);
+    position: relative;
+  }
+  .logo-mark svg { width: 100%; height: 100%; display: block; }
+  .logo-name {
+    line-height: 1.05;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    font-size: 14px;
+  }
+  .logo-name b { display: block; font-family: var(--sans); font-weight: 600; font-size: 15px; letter-spacing: -0.01em; }
+  .logo-name span { display: block; font-size: 13px; color: var(--ink); font-weight: 500; letter-spacing: -0.005em; }
+
+  .nav-links { display: flex; align-items: center; gap: 28px; }
+  .nav-links a {
+    font-size: 15px;
+    color: var(--ink-2);
+    text-decoration: none;
+    font-weight: 500;
+    padding: 4px 0;
+    position: relative;
+    cursor: default;
+  }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-links a.on { color: var(--ink); }
+  .nav-links a.on::after {
+    content: '';
+    position: absolute; left: 0; right: 0; bottom: -10px;
+    height: 2px; background: var(--accent);
+  }
+
+  .nav-cta {
+    background: var(--ink); color: var(--bg);
+    border: 0; border-radius: 999px;
+    padding: 11px 20px;
+    font: 500 14px var(--sans);
+    cursor: default;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .nav-cta:hover { background: var(--ink-2); }
+
+  .theme-btn {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    display: grid; place-items: center;
+    cursor: default;
+    color: var(--ink-2);
+  }
+  .theme-btn:hover { background: var(--bg-soft); color: var(--ink); }
+  .theme-btn svg { width: 15px; height: 15px; }
+
+  /* ───────── Page system ───────── */
+  .page { display: none; }
+  .page.on { display: block; }
+  .page.on.entering { animation: pageIn .35s ease both; }
+  @keyframes pageIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 56px 32px 96px; }
+
+  /* ───────── Crumbs ───────── */
+  .crumbs {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--ink-3); font-weight: 600;
+    margin-bottom: 28px;
+  }
+  .crumbs .sep { color: var(--ink-4); }
+  .crumbs a { color: var(--ink-3); text-decoration: none; cursor: default; }
+  .crumbs a:hover { color: var(--ink); }
+  .crumbs b { color: var(--ink); }
+
+  /* ───────── Pill labels ───────── */
+  .pill {
+    display: inline-flex; align-items: center;
+    height: 28px;
+    padding: 0 12px;
+    border-radius: 999px;
+    font-family: var(--mono);
+    font-size: 11px; font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+  .pill.ink { background: var(--ink); color: var(--bg); }
+  .pill.muted { background: var(--bg-soft); color: var(--ink-2); }
+  .pill.good { background: color-mix(in srgb, var(--good) 12%, transparent); color: var(--good); }
+  .pill.bad { background: color-mix(in srgb, var(--bad) 12%, transparent); color: var(--bad); }
+
+  /* ───────── Product detail (page 1) ───────── */
+  .hero {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: 64px;
+    align-items: center;
+    padding: 24px 0 48px;
+  }
+  @media (max-width: 980px) { .hero { grid-template-columns: 1fr; gap: 36px; } }
+
+  .hero h1 {
+    font-family: var(--display);
+    
+    font-weight: 700;
+    font-size: clamp(42px, 5.4vw, 76px);
+    line-height: 0.96;
+    letter-spacing: -0.025em;
+    margin: 18px 0 24px;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  .hero h1 em { font-style: normal; color: var(--ink-3); font-weight: 700; }
+
+  .hero p.lead {
+    font-size: 18px;
+    line-height: 1.55;
+    color: var(--ink-2);
+    max-width: 52ch;
+    margin: 0 0 32px;
+  }
+
+  .hero-cta { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .btn {
+    border: 0; cursor: default;
+    font: 500 15px var(--sans);
+    height: 50px; padding: 0 22px;
+    border-radius: 999px;
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  .btn-dark { background: var(--ink); color: var(--bg); }
+  .btn-dark:hover { background: var(--ink-2); }
+  .btn-line { background: transparent; color: var(--ink); border: 1px solid var(--line-2); }
+  .btn-line:hover { background: var(--bg-soft); }
+  .btn .arrow {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: rgba(255,255,255,.14);
+    display: grid; place-items: center;
+  }
+  .btn-line .arrow { background: var(--bg-soft); color: var(--ink); }
+
+  /* Hero preview tile (the framed visual on the right) */
+  .hero-frame {
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 22px;
+    background: var(--bg);
+  }
+  .hero-tile {
+    background: var(--bg-tile);
+    border-radius: 24px;
+    aspect-ratio: 16 / 9;
+    position: relative;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--line);
+    box-shadow: inset 0 0 100px rgba(0,0,0,0.02);
+  }
+  
+  .gate-container {
+    width: 80%; height: 70%;
+    position: relative;
+    display: flex; gap: 2px;
+    border-radius: 12px; overflow: hidden;
+    box-shadow: 0 30px 60px -20px rgba(0,0,0,0.15);
+  }
+  
+  .gate-l, .gate-r {
+    flex: 1; height: 100%; position: relative;
+    background: var(--bg);
+  }
+  .gate-l { border-right: 1px dashed var(--accent); overflow: hidden; }
+  .gate-l::after {
+    content: 'RASTER DATA'; position: absolute; bottom: 12px; left: 12px;
+    font-family: var(--mono); font-size: 8px; color: var(--ink-4); letter-spacing: 0.1em;
+  }
+  
+  /* Noise pattern for left side */
+  .noise {
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.08;
+  }
+  
+  .gate-r { background: var(--bg-soft); }
+  .gate-r::after {
+    content: 'VECTOR READY'; position: absolute; bottom: 12px; right: 12px;
+    font-family: var(--mono); font-size: 8px; color: var(--accent); letter-spacing: 0.1em;
+  }
+
+  .scan-bar-v {
+    position: absolute; top: 0; bottom: 0; width: 3px;
+    background: var(--accent);
+    box-shadow: 0 0 20px var(--accent);
+    left: 0; z-index: 10;
+    animation: slideAcross 5s infinite ease-in-out;
+  }
+  @keyframes slideAcross {
+    0%, 100% { left: 0%; }
+    50% { left: 100%; }
+  }
+
+  .decision-icon {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--bg);
+    border: 4px solid var(--good);
+    color: var(--good);
+    z-index: 20;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    animation: iconPulse 5s infinite;
+  }
+  @keyframes iconPulse {
+    0%, 45%, 55%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    48%, 52% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  }
+
+  .vector-viz {
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle at center, var(--accent) 1px, transparent 1px);
+    background-size: 20px 20px;
+    opacity: 0.2;
+  }
+
+  .hero-stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 18px;
+  }
+  .hero-stat {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px;
+  }
+  .hero-stat .l { font-size: 11px; color: var(--ink-3); letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600; }
+  .hero-stat .v { font-family: var(--display); font-weight: 700;  font-size: 26px; margin-top: 4px; letter-spacing: -0.02em; }
+
+  /* ───────── How-it-works strip ───────── */
+  .how {
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 36px 0;
+    margin: 24px 0 0;
+  }
+  .how-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .how-head h3 {
+    font-family: var(--display); 
+    font-weight: 700; font-size: 28px;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+  .how-head .step-label { font-family: var(--mono); font-size: 12px; color: var(--ink-3); letter-spacing: 0.06em; text-transform: uppercase; }
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+  .step {
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 22px;
+    background: var(--bg);
+    position: relative;
+  }
+  .step .n {
+    font-family: var(--mono); font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    font-weight: 500;
+  }
+  .step h4 {
+    font-family: var(--display); 
+    font-weight: 600; font-size: 19px;
+    letter-spacing: -0.01em;
+    margin: 8px 0 6px;
+  }
+  .step p { margin: 0; font-size: 13.5px; color: var(--ink-3); line-height: 1.5; }
+  /* Step animations */
+  .step:hover .step-tile { background: var(--accent-soft); }
+  
+  .s-ingest { animation: slideIn 2s infinite ease-in-out; }
+  @keyframes slideIn { 
+    0% { transform: translateY(40px); opacity: 0; }
+    30%, 70% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(-40px); opacity: 0; }
+  }
+
+  .s-bar { transform-origin: bottom; animation: grow 1.5s infinite alternate ease-in-out; }
+  @keyframes grow { from { transform: scaleY(0.4); } to { transform: scaleY(1); } }
+
+  .s-ring { stroke-dasharray: 100; stroke-dashoffset: 100; animation: ringFill 2s infinite alternate ease-in-out; }
+  @keyframes ringFill { from { stroke-dashoffset: 100; } to { stroke-dashoffset: 20; } }
+
+  .s-route { animation: route 2s infinite ease-in-out; }
+  @keyframes route {
+    0% { transform: translateX(-40px); opacity: 0; }
+    20% { transform: translateX(0); opacity: 1; }
+    80% { transform: translateX(0); opacity: 1; }
+    100% { transform: translateX(40px); opacity: 0; }
+  }
+
+  /* ───────── Specs grid ───────── */
+  .specs-section { padding: 56px 0 24px; }
+  .specs-head {
+    display: grid; grid-template-columns: 1fr 2fr; gap: 60px; margin-bottom: 36px;
+    align-items: end;
+  }
+  .specs-head h2 {
+    font-family: var(--display); 
+    font-weight: 700; font-size: clamp(34px, 3.6vw, 48px);
+    letter-spacing: -0.02em;
+    margin: 12px 0 0; line-height: 1;
+  }
+  .specs-head p {
+    margin: 0; font-size: 15.5px; color: var(--ink-3); line-height: 1.55;
+    max-width: 60ch;
+  }
+
+  .specs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .spec {
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 24px;
+  }
+  .spec .l { font-family: var(--mono); font-size: 11px; color: var(--ink-3); letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500; }
+  .spec h5 { font-family: var(--display);  font-weight: 600; font-size: 20px; letter-spacing: -0.01em; margin: 10px 0 8px; }
+  .spec p { margin: 0; font-size: 14px; color: var(--ink-3); line-height: 1.5; }
+
+  /* ───────── CTA strip ───────── */
+  .cta-strip {
+    margin-top: 48px;
+    padding: 56px;
+    background: var(--ink);
+    color: var(--bg);
+    border-radius: 22px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 32px;
+  }
+  .cta-strip h3 {
+    font-family: var(--display); 
+    font-weight: 700; font-size: clamp(28px, 3vw, 40px);
+    line-height: 1.05; letter-spacing: -0.02em;
+    margin: 0;
+    color: var(--bg);
+    max-width: 26ch;
+  }
+  .cta-strip p { margin: 12px 0 0; color: rgba(255,255,255,.65); font-size: 15px; max-width: 50ch; }
+  .cta-strip .btn-light {
+    background: var(--bg); color: var(--ink);
+    border-radius: 999px;
+    height: 52px; padding: 0 24px;
+    font: 500 15px var(--sans);
+    display: inline-flex; align-items: center; gap: 10px;
+    cursor: default;
+  }
+  .cta-strip .btn-light:hover { background: var(--bg-soft); }
+
+  /* ═══════════════════════════════════════════════════
+     PAGE 2 · UPLOAD
+     ═══════════════════════════════════════════════════ */
+  .uploader-shell {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 32px;
+    align-items: start;
+  }
+  @media (max-width: 980px) { .uploader-shell { grid-template-columns: 1fr; } }
+
+  .uploader {
+    border: 1px dashed var(--line-2);
+    background: var(--bg);
+    border-radius: 22px;
+    padding: 56px;
+    text-align: center;
+    transition: background .15s, border-color .15s;
+  }
+  .uploader.drag { border-color: var(--accent); background: var(--accent-soft); }
+  .uploader-icon {
+    width: 72px; height: 72px;
+    margin: 0 auto 22px;
+    border-radius: 50%;
+    background: var(--bg-tile);
+    display: grid; place-items: center;
+    color: var(--ink-2);
+  }
+  .uploader-icon svg { width: 28px; height: 28px; }
+  .uploader h2 {
+    font-family: var(--display); 
+    font-weight: 700; font-size: clamp(28px, 3vw, 38px);
+    line-height: 1.05; letter-spacing: -0.02em;
+    margin: 0 0 10px;
+  }
+  .uploader p { margin: 0 auto 24px; color: var(--ink-3); font-size: 15px; max-width: 46ch; line-height: 1.55; }
+  .uploader-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .uploader-foot {
+    margin-top: 30px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    display: flex; justify-content: center; gap: 36px;
+    font-family: var(--mono); font-size: 12px; color: var(--ink-3);
+    letter-spacing: 0.04em; text-transform: uppercase; font-weight: 500;
+  }
+  .uploader-foot span::before { content: '○ '; color: var(--ink-4); }
+
+  .samples-card {
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    padding: 26px;
+    background: var(--bg);
+  }
+  .samples-card h4 {
+    font-family: var(--display); 
+    font-weight: 700; font-size: 19px; letter-spacing: -0.01em;
+    margin: 0 0 4px;
+  }
+  .samples-card .sub { font-size: 13px; color: var(--ink-3); margin: 0 0 18px; }
+  .sample {
+    display: grid;
+    grid-template-columns: 44px 1fr 22px;
+    gap: 12px;
+    align-items: center;
+    padding: 12px;
+    border-radius: 12px;
+    cursor: default;
+    border: 1px solid transparent;
+  }
+  .sample + .sample { margin-top: 4px; }
+  .sample:hover { background: var(--bg-soft); border-color: var(--line); }
+  .sample-thumb {
+    width: 44px; height: 44px;
+    border-radius: 8px;
+    background: var(--bg-tile);
+    display: grid; place-items: center;
+    color: var(--ink-2);
+    position: relative; overflow: hidden;
+  }
+  .sample-thumb svg { width: 26px; height: 26px; }
+  .sample-name { font-weight: 500; font-size: 14px; line-height: 1.2; }
+  .sample-meta { font-family: var(--mono); font-size: 11px; color: var(--ink-3); letter-spacing: 0.04em; text-transform: uppercase; margin-top: 3px; }
+  .sample-arrow {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: 1px solid var(--line-2);
+    display: grid; place-items: center;
+    color: var(--ink-3);
+  }
+  .sample:hover .sample-arrow { color: var(--ink); border-color: var(--ink); }
+
+  /* ═══════════════════════════════════════════════════
+     PAGE 3 · ANALYZING
+     ═══════════════════════════════════════════════════ */
+  .analyzing {
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    padding: 80px 56px;
+    background: var(--bg);
+    text-align: center;
+    max-width: 720px; margin: 0 auto;
+  }
+  .ring-host {
+    position: relative;
+    width: 132px; height: 132px;
+    margin: 0 auto 28px;
+  }
+  .ring-host svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .ring-host .pct {
+    position: absolute; inset: 0;
+    display: grid; place-items: center;
+    font-family: var(--display);  font-weight: 700;
+    font-size: 32px; letter-spacing: -0.02em;
+  }
+  .analyzing h2 {
+    font-family: var(--display);  font-weight: 700;
+    font-size: 32px; letter-spacing: -0.02em; margin: 0 0 8px;
+  }
+  .analyzing p { color: var(--ink-3); margin: 0; font-size: 14.5px; }
+
+  .stages {
+    margin-top: 36px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .stage {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px;
+    text-align: left;
+    position: relative;
+  }
+  .stage .l { font-family: var(--mono); font-size: 11px; color: var(--ink-3); letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500; }
+  .stage .v { font-family: var(--display);  font-weight: 600; font-size: 15px; margin-top: 4px; letter-spacing: -0.01em; }
+  .stage.done { border-color: color-mix(in srgb, var(--good) 30%, var(--line)); }
+  .stage.done::after {
+    content: '✓'; position: absolute; right: 12px; top: 12px;
+    color: var(--good); font-size: 13px; font-weight: 600;
+  }
+  .stage.run { border-color: var(--ink-2); }
+  .stage.run::after {
+    content: ''; position: absolute; right: 12px; top: 12px;
+    width: 10px; height: 10px; border-radius: 50%;
+    border: 2px solid var(--line);
+    border-top-color: var(--ink);
+    animation: spin .8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ═══════════════════════════════════════════════════
+     PAGE 4 · RESULTS
+     ═══════════════════════════════════════════════════ */
+  /* ═══════════════════════════════════════════════════
+     PAGE 4 · RESULTS (HERO REDESIGN)
+     ═══════════════════════════════════════════════════ */
+  .results-hero {
+    text-align: center;
+    padding: 80px 32px 100px;
+    background: radial-gradient(circle at 50% 50%, var(--accent-soft) 0%, transparent 70%);
+    position: relative;
+    border-radius: 40px;
+    margin-bottom: 40px;
+    overflow: hidden;
+  }
+  .results-hero::after {
+    content: ''; position: absolute; bottom: 30px; left: 50%;
+    width: 24px; height: 40px; border: 2px solid var(--ink-4); border-radius: 12px;
+    transform: translateX(-50%);
+    animation: mouse 2s infinite;
+  }
+  @keyframes mouse { 
+    0%, 20%, 50%, 80%, 100% { transform: translate(-50%, 0); }
+    40% { transform: translate(-50%, 10px); }
+    60% { transform: translate(-50%, 5px); }
+  }
+
+  .res-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 16px; border-radius: 99px;
+    background: var(--bg); border: 1px solid var(--line);
+    font-family: var(--mono); font-size: 11px; font-weight: 700;
+    color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  }
+  .results-hero h1 {
+    font-family: var(--display);
+    font-weight: 800; font-size: clamp(48px, 8vw, 92px);
+    line-height: 0.9; letter-spacing: -0.04em;
+    margin: 0 0 24px;
+    background: linear-gradient(to bottom, var(--ink), var(--ink-3));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .results-hero .v-tag {
+    display: inline-block;
+    padding: 12px 32px; border-radius: 16px;
+    font-family: var(--display); font-weight: 800; font-size: 24px;
+    letter-spacing: -0.02em;
+    margin-bottom: 32px;
+    transition: transform 0.3s ease;
+  }
+  .results-hero .v-tag.good { background: var(--good); color: #fff; box-shadow: 0 20px 40px -10px rgba(26, 143, 76, 0.4); }
+  .results-hero .v-tag.bad { background: var(--bad); color: #fff; box-shadow: 0 20px 40px -10px rgba(194, 65, 12, 0.4); }
+  .results-hero:hover .v-tag { transform: scale(1.05) translateY(-5px); }
+
+  .results-hero p {
+    font-size: 18px; color: var(--ink-3); line-height: 1.6;
+    max-width: 60ch; margin: 0 auto 40px;
+    font-weight: 500;
+  }
+
+  .hero-stats {
+    display: flex; justify-content: center; gap: 48px;
+    margin-top: 64px;
+    padding: 32px; background: rgba(255,255,255,0.4);
+    backdrop-filter: blur(20px); border-radius: 24px;
+    border: 1px solid var(--line);
+    max-width: 800px; margin-left: auto; margin-right: auto;
+  }
+  .h-stat-item { text-align: left; }
+  .h-stat-l { font-family: var(--mono); font-size: 10px; color: var(--ink-4); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; }
+  .h-stat-v { font-family: var(--display); font-weight: 700; font-size: 32px; color: var(--ink); margin-top: 4px; }
+
+  .scroll-hint {
+    margin-top: 80px;
+    font-family: var(--mono); font-size: 10px; color: var(--ink-4);
+    text-transform: uppercase; letter-spacing: 0.2em;
+  }
+
+  /* Two-pane: composition + per-page */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 980px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  .card {
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    padding: 28px;
+    background: var(--bg);
+  }
+  .card-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 18px;
+  }
+  .card-head h3 {
+    font-family: var(--display); 
+    font-weight: 700; font-size: 22px; letter-spacing: -0.015em;
+    margin: 0;
+  }
+  .card-head .hint { font-family: var(--mono); font-size: 11px; color: var(--ink-3); letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500; }
+
+  /* Composition donut + legend */
+  .comp-row {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 22px;
+    align-items: center;
+  }
+  .donut { width: 180px; height: 180px; position: relative; }
+  .donut svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .donut-c {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center;
+  }
+  .donut-c .l { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+  .donut-c .v { font-family: var(--display);  font-weight: 700; font-size: 26px; letter-spacing: -0.02em; line-height: 1; margin-top: 4px; }
+  .donut-c .v small { font-size: 14px; color: var(--ink-3); margin-left: 2px; font-weight: 500; }
+
+  .legend { display: flex; flex-direction: column; gap: 10px; }
+  .lg-row { display: grid; grid-template-columns: 12px 1fr 56px; align-items: center; gap: 10px; }
+  .lg-sw { width: 12px; height: 12px; border-radius: 3px; }
+  .lg-sw.v { background: var(--vec); }
+  .lg-sw.h { background: var(--hch); }
+  .lg-sw.i { background: var(--img); }
+  .lg-sw.t { background: var(--txt); }
+  .lg-l { font-size: 13.5px; color: var(--ink-2); }
+  .lg-v { font-family: var(--mono); font-size: 13px; font-weight: 500; text-align: right; }
+
+  /* Per-page table */
+  .pg-row {
+    display: grid;
+    grid-template-columns: 56px 1fr 76px;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .pg-row:last-child { border-bottom: 0; padding-bottom: 0; }
+  .pg-row.head {
+    padding: 0 0 10px;
+    font-family: var(--mono); font-size: 10.5px; color: var(--ink-3);
+    letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600;
+  }
+  .pg-num { font-family: var(--mono); font-size: 13px; color: var(--ink-2); }
+  .pg-bar { height: 8px; border-radius: 4px; background: var(--bg-soft); overflow: hidden; display: flex; }
+  .pg-bar i { display: block; height: 100%; }
+  .pg-tag {
+    justify-self: end;
+    font-family: var(--mono); font-size: 10.5px; font-weight: 500;
+    padding: 4px 10px; border-radius: 999px;
+    border: 1px solid var(--line-2);
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .pg-tag.v { color: var(--vec); border-color: color-mix(in srgb, var(--vec) 45%, var(--line-2)); }
+  .pg-tag.i { color: var(--img); border-color: color-mix(in srgb, var(--img) 45%, var(--line-2)); }
+  .pg-tag.t { color: var(--txt); border-color: var(--line-2); }
+
+  /* PDF preview pane */
+  .preview-pane {
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    overflow: hidden;
+    background: var(--bg);
+  }
+  .preview-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--line);
+  }
+  .preview-head .ttl { font-weight: 600; font-size: 14px; }
+  .preview-head .ctrls { display: flex; align-items: center; gap: 4px; }
+  .ic {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    display: grid; place-items: center;
+    color: var(--ink-2);
+    cursor: default;
+  }
+  .ic:hover { background: var(--bg-soft); color: var(--ink); }
+  .ic svg { width: 13px; height: 13px; }
+  .ic[disabled] { opacity: 0.4; }
+
+  .preview-stage {
+    background: var(--bg-tile);
+    padding: 36px;
+    min-height: 520px;
+    display: grid; place-items: center;
+    position: relative;
+  }
+  .preview-stage::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle at center, var(--ink-4) 0.7px, transparent 1px);
+    background-size: 14px 14px;
+    opacity: 0.18;
+    mask-image: radial-gradient(ellipse at center, #000 30%, transparent 80%);
+    -webkit-mask-image: radial-gradient(ellipse at center, #000 30%, transparent 80%);
+  }
+  .donut-host {
+    position: relative;
+    width: 220px; height: 220px;
+    margin: 40px auto;
+  }
+  .donut-host svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .donut-host .v {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-family: var(--display);  font-weight: 700;
+  }
+  .donut-host .v .n { font-size: 44px; letter-spacing: -0.02em; line-height: 1; }
+  .donut-host .v .l { font-family: var(--mono); font-size: 10px; color: var(--ink-4); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; }
+  
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .met {
+    padding: 20px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--bg);
+    transition: all 0.2s ease;
+  }
+  .met:hover { transform: translateY(-2px); box-shadow: 0 8px 16px -8px rgba(0,0,0,0.1); border-color: var(--line-2); }
+  .met .l { font-family: var(--mono); font-size: 10px; color: var(--ink-4); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
+  .met .v { font-family: var(--display); font-weight: 700; font-size: 22px; margin-top: 8px; letter-spacing: -0.01em; }
+  .met .f { font-size: 11px; color: var(--ink-4); margin-top: 2px; }
+  .pdf-page {
+    width: 360px; height: 480px;
+    background: white;
+    border-radius: 4px;
+    box-shadow: 0 1px 2px rgba(0,0,0,.06), 0 16px 40px -16px rgba(0,0,0,.22);
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+  }
+  html.dark .pdf-page { background: #f5f3ee; }
+  .pdf-page svg { width: 100%; height: 100%; display: block; }
+  .preview-foot {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 22px;
+    border-top: 1px solid var(--line);
+    font-family: var(--mono); font-size: 12px; color: var(--ink-3);
+  }
+
+  /* Geometry metrics grid */
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  .met {
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 18px;
+  }
+  .met .l { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); font-weight: 500; }
+  .met .v { font-family: var(--display);  font-weight: 700; font-size: 26px; letter-spacing: -0.02em; margin-top: 6px; line-height: 1; }
+  .met .f { font-size: 12px; color: var(--ink-3); margin-top: 4px; }
+
+  /* Footer */
+  .foot {
+    border-top: 1px solid var(--line);
+    padding: 36px 32px;
+    text-align: center;
+    color: var(--ink-3);
+    font-size: 13px;
+  }
+
+  /* tweaks panel scoping */
+  html.dark .twk-panel { background: rgba(20,20,22,.85) !important; color: var(--ink) !important; border-color: rgba(255,255,255,.08) !important; }
+  html.dark .twk-hd b, html.dark .twk-lbl > span:first-child { color: var(--ink) !important; }
+  html.dark .twk-lbl, html.dark .twk-val { color: var(--ink-3) !important; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════ TOP NAV ═══════════ -->
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="logo">
+      <div class="logo-mark" aria-label="Godel">
+        <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1">
+          <circle cx="20" cy="20" r="18"/>
+          <g stroke-width="0.7">
+            <path d="M5 20 L20 4 L35 20 L20 36 Z"/>
+            <path d="M5 20 L35 20 M20 4 L20 36"/>
+            <path d="M9 11 L31 29 M31 11 L9 29"/>
+            <circle cx="20" cy="20" r="7" fill="currentColor" stroke="none"/>
+          </g>
+        </svg>
+      </div>
+      <div class="logo-name">
+        <b>Godel</b>
+        <span>Technologies</span>
+      </div>
+    </div>
+    <div class="nav-links">
+      <a>Home</a>
+      <a class="on">Products</a>
+      <a>Solutions</a>
+      <a>Case Studies</a>
+      <a>Our Story</a>
+      <a>FAQ</a>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <button class="theme-btn" id="themeBtn" title="Toggle theme">
+        <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+      <button class="nav-cta">Partner with Us</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE 1 — PRODUCT DETAIL
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="page on" id="page-detail">
+  <div class="wrap">
+    <div class="crumbs">
+      <a data-go="detail">Products</a>
+      <span class="sep">/</span>
+      <span>Pre-processing tool</span>
+      <span class="sep">/</span>
+      <b>Document Layout Analyzer</b>
+    </div>
+
+    <div class="hero">
+      <div>
+        <span class="pill">Pre-processing tool · v2.4</span>
+        <h1>Know if a PDF is <em>worth</em> vectorizing<br/>before you spend a cycle.</h1>
+        <p class="lead">
+          Document Layout Analyzer reads your PDF page by page, measures the balance
+          of vector geometry, raster imagery and selectable text, and tells you which
+          pipeline to send it to — so your geometry engine never wastes a minute on a scan.
+        </p>
+        <div class="hero-cta">
+          <button class="btn btn-dark" data-go="upload">
+            Try the analyzer
+            <span class="arrow">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+            </span>
+          </button>
+          <button class="btn btn-line">
+            Read the docs
+            <span class="arrow">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17 17 7M9 7h8v8"/></svg>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <div class="hero-frame">
+          <div class="hero-tile">
+          <div class="gate-container">
+            <div class="gate-l">
+              <div class="noise"></div>
+              <svg viewBox="0 0 200 120" style="position:absolute; inset:0; padding:30px; opacity:0.3;">
+                <rect x="20" y="20" width="160" height="80" fill="var(--line)" />
+                <rect x="40" y="40" width="100" height="10" fill="var(--line)" />
+                <rect x="40" y="60" width="80" height="10" fill="var(--line)" />
+              </svg>
+            </div>
+            <div class="gate-r">
+              <div class="vector-viz"></div>
+              <svg viewBox="0 0 200 120" style="position:absolute; inset:0; padding:30px;">
+                <path d="M20,20 L180,20 L180,100 L20,100 Z" fill="none" stroke="var(--accent)" stroke-width="2" />
+                <path d="M40,40 L140,40 M40,60 L120,60" fill="none" stroke="var(--ink)" stroke-width="1.5" />
+                <circle cx="150" cy="70" r="15" fill="none" stroke="var(--accent)" stroke-width="2" />
+              </svg>
+            </div>
+            <div class="scan-bar-v"></div>
+            <div class="decision-icon">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+          </div>
+        </div>
+          <div class="hero-stat-row">
+            <div class="hero-stat"><div class="l">Vector</div><div class="v">66<small style="font-size:18px;color:var(--ink-3);">%</small></div></div>
+            <div class="hero-stat"><div class="l">Image</div><div class="v">7<small style="font-size:18px;color:var(--ink-3);">%</small></div></div>
+            <div class="hero-stat"><div class="l">Text</div><div class="v">27<small style="font-size:18px;color:var(--ink-3);">%</small></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HOW IT WORKS -->
+    <div class="how">
+      <div class="how-head">
+        <h3>How it works</h3>
+        <span class="step-label">04 Steps · ~2.4s per page</span>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <span class="n">01 · Ingest</span>
+          <h4>Parse the PDF</h4>
+          <p>Page-level extraction of vector paths, raster regions and selectable text.</p>
+          <div class="step-tile">
+            <svg viewBox="0 0 200 86">
+              <rect class="s-ingest" x="75" y="15" width="50" height="60" rx="4" fill="white" stroke="var(--line-2)" />
+            </svg>
+          </div>
+        </div>
+        <div class="step">
+          <span class="n">02 · Measure</span>
+          <h4>Count geometry</h4>
+          <p>Lines, curves, hatched fills — every shape contributes to a normalized score.</p>
+          <div class="step-tile">
+            <svg viewBox="0 0 200 86">
+              <rect class="s-bar" x="50" y="30" width="15" height="40" rx="2" fill="var(--ink)" style="animation-delay: 0s;"/>
+              <rect class="s-bar" x="75" y="20" width="15" height="50" rx="2" fill="var(--ink)" style="animation-delay: 0.2s;"/>
+              <rect class="s-bar" x="100" y="40" width="15" height="30" rx="2" fill="var(--accent)" style="animation-delay: 0.4s;"/>
+              <rect class="s-bar" x="125" y="25" width="15" height="45" rx="2" fill="var(--ink)" style="animation-delay: 0.6s;"/>
+            </svg>
+          </div>
+        </div>
+        <div class="step">
+          <span class="n">03 · Normalize</span>
+          <h4>Score the page</h4>
+          <p>Convert raw counts into page-relative percentages so all formats are comparable.</p>
+          <div class="step-tile">
+            <svg viewBox="0 0 200 86">
+              <circle cx="100" cy="43" r="25" fill="none" stroke="var(--line-2)" stroke-width="6" />
+              <circle class="s-ring" cx="100" cy="43" r="25" fill="none" stroke="var(--ink)" stroke-width="6" stroke-linecap="round" transform="rotate(-90 100 43)"/>
+            </svg>
+          </div>
+        </div>
+        <div class="step">
+          <span class="n">04 · Classify</span>
+          <h4>Route or reject</h4>
+          <p>One verdict per file: vector-rich → pipeline, otherwise → OCR or NLP service.</p>
+          <div class="step-tile">
+            <svg viewBox="0 0 200 86">
+              <rect class="s-route" x="40" y="25" width="30" height="40" rx="3" fill="white" stroke="var(--line-2)" />
+              <path d="M80,43 L120,43" stroke="var(--line-2)" stroke-dasharray="4 4" />
+              <rect x="130" y="25" width="40" height="15" rx="8" fill="var(--ink)" />
+              <rect x="130" y="45" width="40" height="15" rx="8" fill="white" stroke="var(--line-2)" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SPECS -->
+    <div class="specs-section">
+      <div class="specs-head">
+        <h2>Built for the geometry pipeline.</h2>
+        <p>Drop in a PDF the way it leaves a CAD plotter, a scanner, a spec writer or a tender package — the analyzer routes each page to the right downstream service so nothing arrives at the wrong door.</p>
+      </div>
+      <div class="specs">
+        <div class="spec">
+          <span class="l">01 · Throughput</span>
+          <h5>200 MB · 500 pages</h5>
+          <p>Stream-parses large engineering sets without spilling to disk.</p>
+        </div>
+        <div class="spec">
+          <span class="l">02 · Geometry</span>
+          <h5>Lines, curves, hatches</h5>
+          <p>Bezier and quad curves, line-segment lengths, and shaded fill regions.</p>
+        </div>
+        <div class="spec">
+          <span class="l">03 · Page-aware</span>
+          <h5>Per-page verdicts</h5>
+          <p>One file can hold a vector cover, scanned annexes and a text spec — we treat them separately.</p>
+        </div>
+        <div class="spec">
+          <span class="l">04 · Local</span>
+          <h5>Runs on your VPC</h5>
+          <p>No bytes ever leave your environment. Ships as a container or Python module.</p>
+        </div>
+        <div class="spec">
+          <span class="l">05 · API</span>
+          <h5>REST + Python SDK</h5>
+          <p>Integrate into batch pipelines or call inline from a workflow tool.</p>
+        </div>
+        <div class="spec">
+          <span class="l">06 · Audit</span>
+          <h5>Explainable outputs</h5>
+          <p>Every verdict ships with the underlying counts so reviewers can reproduce it.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-strip">
+      <div>
+        <h3>Ready to see it on a real drawing?</h3>
+        <p>Drop in a PDF or pick from a sample. Runs in your browser — no signup, no upload off-machine.</p>
+      </div>
+      <button class="btn-light" data-go="upload">
+        Open the analyzer
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE 2 — UPLOAD
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="page" id="page-upload">
+  <div class="wrap">
+    <div class="crumbs">
+      <a data-go="detail">Products</a>
+      <span class="sep">/</span>
+      <a data-go="detail">Document Layout Analyzer</a>
+      <span class="sep">/</span>
+      <b>Analyzer</b>
+    </div>
+
+    <div style="margin-bottom: 32px; max-width: 720px;">
+      <span class="pill muted">Step 01 of 03 · Choose a file</span>
+      <h1 class="display" style="font-weight:700;font-size:clamp(36px,4.4vw,60px);line-height:0.98;letter-spacing:-0.025em;margin:14px 0 12px;">Drop a PDF to analyze.</h1>
+      <p style="margin:0;color:var(--ink-3);font-size:16px;line-height:1.55;max-width:54ch;">Upload a drawing, survey, scan or spec. We process locally — files never leave your browser. Or pick a sample below to skip ahead.</p>
+    </div>
+
+    <div class="uploader-shell">
+      <div class="uploader" id="drop">
+        <div class="uploader-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+        </div>
+        <h2>Drop a PDF here</h2>
+        <p>Drag a file directly onto this panel, or browse from your machine. Up to 200 MB · 1–500 pages.</p>
+        <div class="uploader-actions">
+          <button class="btn btn-dark" id="browseBtn">
+            Browse files
+            <span class="arrow">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+            </span>
+          </button>
+        </div>
+        <div class="uploader-foot">
+          <span>Up to 200 MB</span>
+          <span>1–500 pages</span>
+          <span>Local only</span>
+        </div>
+      </div>
+
+      <aside class="samples-card">
+        <h4>Or try a sample</h4>
+        <p class="sub">Three real-world PDF flavors — see how the analyzer routes each.</p>
+        <div class="sample" data-sample="vector">
+          <div class="sample-thumb">
+            <svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.4">
+              <rect x="3" y="3" width="20" height="20" rx="1.5"/>
+              <line x1="13" y1="3" x2="13" y2="23"/>
+              <line x1="3" y1="13" x2="23" y2="13"/>
+              <circle cx="8" cy="8" r="2"/>
+            </svg>
+          </div>
+          <div>
+            <div class="sample-name">Floor-Plan-Block-B.pdf</div>
+            <div class="sample-meta">12 pages · 8.4 MB · vector</div>
+          </div>
+          <div class="sample-arrow">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </div>
+        </div>
+        <div class="sample" data-sample="image">
+          <div class="sample-thumb">
+            <svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.4">
+              <rect x="3" y="3" width="20" height="20" rx="1.5"/>
+              <circle cx="9" cy="10" r="2"/>
+              <path d="m3 19 6-6 5 5 4-4 5 5"/>
+            </svg>
+          </div>
+          <div>
+            <div class="sample-name">Site-Survey-Scan.pdf</div>
+            <div class="sample-meta">6 pages · 22.1 MB · scan</div>
+          </div>
+          <div class="sample-arrow">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </div>
+        </div>
+        <div class="sample" data-sample="text">
+          <div class="sample-thumb">
+            <svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.4">
+              <rect x="3" y="3" width="20" height="20" rx="1.5"/>
+              <line x1="7" y1="9" x2="19" y2="9"/>
+              <line x1="7" y1="13" x2="19" y2="13"/>
+              <line x1="7" y1="17" x2="14" y2="17"/>
+            </svg>
+          </div>
+          <div>
+            <div class="sample-name">Spec-Document.pdf</div>
+            <div class="sample-meta">24 pages · 1.2 MB · text</div>
+          </div>
+          <div class="sample-arrow">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <div style="margin-top:24px;">
+      <button class="btn-sm" data-go="detail">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back to product
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE 3 — ANALYZING
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="page" id="page-analyzing">
+  <div class="wrap">
+    <div class="crumbs">
+      <a data-go="detail">Products</a>
+      <span class="sep">/</span>
+      <a data-go="detail">Document Layout Analyzer</a>
+      <span class="sep">/</span>
+      <b>Analyzing</b>
+    </div>
+
+    <div class="analyzing">
+      <span class="pill muted" id="anlFile">Floor-Plan-Block-B.pdf</span>
+      <div style="height:24px;"></div>
+      <div class="ring-host">
+        <svg viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="44" fill="none" stroke="var(--line)" stroke-width="6"/>
+          <circle id="anlRing" cx="50" cy="50" r="44" fill="none" stroke="var(--ink)" stroke-width="6"
+                  stroke-linecap="round"
+                  stroke-dasharray="276.46" stroke-dashoffset="276.46"
+                  style="transition: stroke-dashoffset 0.4s ease;"/>
+        </svg>
+        <div class="pct" id="anlPct">0%</div>
+      </div>
+      <h2>Analyzing the PDF</h2>
+      <p id="anlStatus">Parsing pages and counting vector primitives…</p>
+
+      <div class="stages" id="stages">
+        <div class="stage" data-i="0"><div class="l">Stage 01</div><div class="v">Ingest pages</div></div>
+        <div class="stage" data-i="1"><div class="l">Stage 02</div><div class="v">Count geometry</div></div>
+        <div class="stage" data-i="2"><div class="l">Stage 03</div><div class="v">Normalize scores</div></div>
+        <div class="stage" data-i="3"><div class="l">Stage 04</div><div class="v">Classify file</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE 4 — RESULTS
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="page" id="page-results">
+  <div class="wrap">
+    <div class="crumbs">
+      <a data-go="detail">Products</a>
+      <span class="sep">/</span>
+      <a data-go="detail">Document Layout Analyzer</a>
+      <span class="sep">/</span>
+      <a data-go="upload">Analyzer</a>
+      <span class="sep">/</span>
+      <b>Results</b>
+    </div>
+
+    <div class="results-hero">
+      <div class="res-pill" id="resTag">PRE-PROCESSING TOOL · RUN #4666</div>
+      <h1 id="resTitle">Structured Geometry Detected</h1>
+      <div class="v-tag" id="vsR">SUITABLE</div>
+      <p id="vP">Found 10,206 lines and 8,516 curves across 4 pages. With a 6.0% vector density and 192 hatch patterns, this file is fully suitable for parametric extraction.</p>
+      
+      <div class="hero-stats">
+        <div class="h-stat-item">
+          <div class="h-stat-l">Dominant Signal</div>
+          <div class="h-stat-v" id="vsDom">VECTOR</div>
+        </div>
+        <div style="width:1px; background:var(--line);"></div>
+        <div class="h-stat-item">
+          <div class="h-stat-l">Vector Total</div>
+          <div class="h-stat-v"><span id="vsV">106.04</span>%</div>
+        </div>
+        <div style="width:1px; background:var(--line);"></div>
+        <div class="h-stat-item">
+          <div class="h-stat-l">Confidence</div>
+          <div class="h-stat-v" id="confPct">99%</div>
+        </div>
+      </div>
+      
+      <div class="scroll-hint">Scroll for details</div>
+    </div>
+
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 24px; padding: 0 8px;">
+      <div class="mono" style="font-size:12px; color:var(--ink-4); letter-spacing:0.05em;" id="resFile">POST_6.PDF · 4 PAGES · 1.7 MB</div>
+      <button class="btn-sm" data-go="upload">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M21 12a9 9 0 1 1-3-6.7l3 2.7M21 4v5h-5"/></svg>
+        Re-run
+      </button>
+    </div>
+
+    <!-- Composition + per-page -->
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-head">
+          <h3>Composition</h3>
+          <span class="hint">Document totals</span>
+        </div>
+        <div class="comp-row">
+          <div class="donut">
+            <svg viewBox="0 0 120 120">
+              <!-- segments injected -->
+              <g id="donutSegs"></g>
+            </svg>
+            <div class="donut-c">
+              <div class="l">Total</div>
+              <div class="v" id="donutV">100<small>%</small></div>
+            </div>
+          </div>
+          <div class="legend" id="legend"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h3>Per-page breakdown</h3>
+          <span class="hint" id="pgHint">12 pages</span>
+        </div>
+        <div class="pg-row head">
+          <span>Page</span>
+          <span>Composition</span>
+          <span style="text-align:right;">Class</span>
+        </div>
+        <div id="pgRows" style="max-height:340px;overflow-y:auto;"></div>
+      </div>
+    </div>
+
+    <!-- Preview + metrics -->
+    <div class="grid-2">
+      <div class="preview-pane">
+        <div class="preview-head">
+          <div>
+            <div class="ttl" id="prFile">Floor-Plan-Block-B.pdf</div>
+          </div>
+          <div class="ctrls">
+            <button class="ic" id="pgPrev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <span class="mono" id="pgLbl" style="font-size:11px;color:var(--ink-3);min-width:64px;text-align:center;">Page 1 / 12</span>
+            <button class="ic" id="pgNext"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg></button>
+          </div>
+        </div>
+        <div class="preview-stage">
+          <div class="pdf-page" id="pdfPage"></div>
+        </div>
+        <div class="preview-foot">
+          <span id="prMeta">A1 LANDSCAPE · 300 DPI</span>
+          <span id="prClass">Page is VECTOR-DOMINANT</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h3>Geometry metrics</h3>
+          <span class="hint" id="metricsHint">Document totals</span>
+        </div>
+        <div class="metrics" id="metrics"></div>
+
+        <div style="margin-top: 22px; padding-top: 22px; border-top: 1px solid var(--line); display: flex; gap: 12px; align-items: center; justify-content: space-between;">
+          <div>
+            <div class="mono" style="font-size: 11px; color: var(--ink-3); letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500;">Next step</div>
+            <div style="font-family: var(--display);  font-weight: 600; font-size: 16px; margin-top: 2px;" id="nextStep">Forward to the Geometry-to-Text Engine</div>
+          </div>
+          <button class="btn-sm dark">
+            Continue
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Closing CTA -->
+    <div class="cta-strip" style="margin-top:32px;">
+      <div>
+        <h3>Run another, or see this in your pipeline.</h3>
+        <p>Wire the analyzer into your batch flow with the Python SDK or REST API. Audit-friendly outputs, your VPC.</p>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn-light" data-go="upload">Run another</button>
+        <button class="btn-light" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,.25);">Talk to us</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="foot">
+  © Godel Technologies · info@godeltech.in
+</div>
+
+<!-- React + Babel for tweaks panel only -->
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+
+<!-- Real Upload Input -->
+<input type="file" id="realFileInput" accept=".pdf" style="display:none" />
+
+<script>
+/* ───────── Sample data ───────── */
+const SAMPLES = {
+  vector: {
+    name: 'Floor-Plan-Block-B.pdf',
+    meta: '12 PAGES · 8.4 MB · A1 LANDSCAPE',
+    pages: 12,
+    verdict: 'good',
+    label: 'VECTOR RICH PDF',
+    title: 'Vector-rich PDF — suitable.',
+    headline: 'VECTOR RICH PDF',
+    accent: '→ SUITABLE',
+    sub: 'Dominant signal is VECTOR. v_total (Vector % + Hatch area %) exceeds Image % and Selectable text % across all 12 pages.',
+    confidence: 88,
+    composition: { vector: 54, hatch: 12, image: 7, text: 27 },
+    routing: 'Suitable',
+    nextStep: 'Classification: VECTOR RICH PDF → SUITABLE',
+    metrics: [
+      ['Lines',           '14,328',     'line_count'],
+      ['Curves',          '4,612',      'curve_count (c + qu)'],
+      ['Quads',           '386',        'quad_count'],
+      ['Hatch count',     '342',        'shade_fill_count'],
+      ['Vector %',        '54.00',      'v_pct'],
+      ['Hatch area %',    '12.00',      'h_pct'],
+      ['Image %',         '7.00',       'i_pct'],
+      ['Selectable text %','27.00',     't_pct'],
+      ['Char count',      '8,914',      'char_count'],
+      ['Vector length',   '92,418.20',  'vector_length (pt)'],
+      ['v_total',         '66.00',      'v_pct + h_pct'],
+      ['Pages',           '12',         'doc.page_count'],
+    ],
+    perPage: [
+      [62,14,4,20,'v'], [58,11,6,25,'v'], [55,13,8,24,'v'], [49,16,5,30,'v'],
+      [60,12,4,24,'v'], [52,10,9,29,'v'], [47,14,11,28,'v'], [51,12,7,30,'v'],
+      [56,10,6,28,'v'], [53,13,8,26,'v'], [48,9,14,29,'v'], [50,11,10,29,'v'],
+    ],
+  },
+  image: {
+    name: 'Site-Survey-Scan.pdf',
+    meta: '6 PAGES · 22.1 MB · SCANNED',
+    pages: 6,
+    verdict: 'bad',
+    label: 'IMAGE RICH PDF',
+    title: 'Image-rich PDF — not suitable.',
+    headline: 'IMAGE RICH PDF',
+    accent: '→ NOT SUITABLE',
+    sub: 'Dominant signal is IMAGE. Image % exceeds v_total (Vector % + Hatch area %) and Selectable text %.',
+    confidence: 94,
+    composition: { vector: 4, hatch: 1, image: 88, text: 7 },
+    routing: 'Not suitable',
+    nextStep: 'Classification: IMAGE RICH PDF → NOT SUITABLE',
+    metrics: [
+      ['Lines',           '128',        'line_count'],
+      ['Curves',          '46',         'curve_count (c + qu)'],
+      ['Quads',           '4',          'quad_count'],
+      ['Hatch count',     '12',         'shade_fill_count'],
+      ['Vector %',        '4.00',       'v_pct'],
+      ['Hatch area %',    '1.00',       'h_pct'],
+      ['Image %',         '88.00',      'i_pct'],
+      ['Selectable text %','7.00',      't_pct'],
+      ['Char count',      '482',        'char_count'],
+      ['Vector length',   '1,204.50',   'vector_length (pt)'],
+      ['v_total',         '5.00',       'v_pct + h_pct'],
+      ['Pages',           '6',          'doc.page_count'],
+    ],
+    perPage: [
+      [5,1,88,6,'i'], [3,1,92,4,'i'], [6,2,84,8,'i'],
+      [4,1,89,6,'i'], [5,0,87,8,'i'], [3,1,88,8,'i'],
+    ],
+  },
+  text: {
+    name: 'Spec-Document.pdf',
+    meta: '24 PAGES · 1.2 MB · A4 PORTRAIT',
+    pages: 24,
+    verdict: 'bad',
+    label: 'TEXT RICH PDF',
+    title: 'Text-rich PDF — not suitable.',
+    headline: 'TEXT RICH PDF',
+    accent: '→ NOT SUITABLE',
+    sub: 'Dominant signal is TEXT. Selectable text % exceeds v_total (Vector % + Hatch area %) and Image %.',
+    confidence: 91,
+    composition: { vector: 8, hatch: 0, image: 6, text: 86 },
+    routing: 'Not suitable',
+    nextStep: 'Classification: TEXT RICH PDF → NOT SUITABLE',
+    metrics: [
+      ['Lines',           '412',        'line_count'],
+      ['Curves',          '88',         'curve_count (c + qu)'],
+      ['Quads',           '0',          'quad_count'],
+      ['Hatch count',     '0',          'shade_fill_count'],
+      ['Vector %',        '8.00',       'v_pct'],
+      ['Hatch area %',    '0.00',       'h_pct'],
+      ['Image %',         '6.00',       'i_pct'],
+      ['Selectable text %','86.00',     't_pct'],
+      ['Char count',      '64,128',     'char_count'],
+      ['Vector length',   '3,108.40',   'vector_length (pt)'],
+      ['v_total',         '8.00',       'v_pct + h_pct'],
+      ['Pages',           '24',         'doc.page_count'],
+    ],
+    perPage: [
+      [8,0,4,88,'t'], [6,0,3,91,'t'], [9,0,8,83,'t'], [7,0,5,88,'t'],
+      [10,0,6,84,'t'], [8,1,7,84,'t'], [9,0,4,87,'t'], [7,0,6,87,'t'],
+      [8,0,5,87,'t'], [11,0,4,85,'t'], [9,0,7,84,'t'], [8,0,3,89,'t'],
+    ],
+  },
+};
+
+const FLOOR_PLAN_HERO = `
+<svg viewBox="0 0 360 480" xmlns="http://www.w3.org/2000/svg">
+  <rect width="360" height="480" fill="#fdfcf9"/>
+  <g stroke="#0c0c0d" stroke-width="0.6" fill="none" font-family="Space Mono, monospace" font-size="6">
+    <rect x="12" y="12" width="336" height="20"/>
+    <text x="20" y="25" font-size="7" font-weight="700">FLOOR PLAN — BLOCK B / LEVEL 01</text>
+    <text x="280" y="25">SHEET 01/12</text>
+    <rect x="30" y="50" width="300" height="380" stroke-width="2"/>
+    <rect x="32" y="52" width="296" height="376"/>
+    <line x1="160" y1="52" x2="160" y2="220" stroke-width="1.4"/>
+    <line x1="160" y1="240" x2="160" y2="428" stroke-width="1.4"/>
+    <line x1="32" y1="220" x2="160" y2="220" stroke-width="1.4"/>
+    <line x1="160" y1="280" x2="328" y2="280" stroke-width="1.4"/>
+    <line x1="240" y1="280" x2="240" y2="428" stroke-width="1.4"/>
+    <path d="M 80 220 A 24 24 0 0 1 104 196"/>
+    <path d="M 200 280 A 22 22 0 0 1 222 258"/>
+    <line x1="80" y1="50" x2="120" y2="50" stroke-width="2.4"/>
+    <line x1="200" y1="50" x2="240" y2="50" stroke-width="2.4"/>
+    <rect x="44" y="64" width="48" height="28" stroke-width="0.5"/>
+    <rect x="100" y="64" width="40" height="22" stroke-width="0.5"/>
+    <circle cx="220" cy="120" r="14" stroke-width="0.5"/>
+    <circle cx="220" cy="120" r="9" stroke-width="0.4"/>
+    <rect x="180" y="170" width="50" height="34" stroke-width="0.5"/>
+    <rect x="260" y="170" width="50" height="34" stroke-width="0.5"/>
+    <pattern id="hh" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="6" stroke="#0c0c0d" stroke-width="0.4"/>
+    </pattern>
+    <rect x="44" y="240" width="100" height="64" stroke-width="0.6"/>
+    <rect x="46" y="242" width="44" height="60" fill="url(#hh)"/>
+    <circle cx="118" cy="262" r="8" stroke-width="0.5"/>
+    <rect x="105" y="284" width="32" height="14" stroke-width="0.5"/>
+    <rect x="180" y="300" width="50" height="100" stroke-width="0.6"/>
+    <line x1="180" y1="312" x2="230" y2="312"/><line x1="180" y1="324" x2="230" y2="324"/>
+    <line x1="180" y1="336" x2="230" y2="336"/><line x1="180" y1="348" x2="230" y2="348"/>
+    <line x1="180" y1="360" x2="230" y2="360"/><line x1="180" y1="372" x2="230" y2="372"/>
+    <line x1="180" y1="384" x2="230" y2="384"/>
+    <line x1="32" y1="445" x2="328" y2="445" stroke="#ff3b30" stroke-width="0.6"/>
+    <text x="180" y="458" text-anchor="middle" fill="#ff3b30" stroke="none">14.80 m</text>
+    <circle cx="32" cy="40" r="6" stroke-width="0.5"/><text x="32" y="42" text-anchor="middle">A</text>
+    <circle cx="160" cy="40" r="6" stroke-width="0.5"/><text x="160" y="42" text-anchor="middle">B</text>
+    <circle cx="328" cy="40" r="6" stroke-width="0.5"/><text x="328" y="42" text-anchor="middle">C</text>
+  </g>
+</svg>`;
+
+function pdfSVG(kind, page) {
+  if (kind === 'vector') return FLOOR_PLAN_HERO.replace('SHEET 01/12', `SHEET ${String(page).padStart(2,'0')}/12`).replace('LEVEL 01', `LEVEL 0${page}`);
+  if (kind === 'image') return `
+<svg viewBox="0 0 360 480" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="noise${page}" width="3" height="3" patternUnits="userSpaceOnUse">
+      <rect width="3" height="3" fill="#e8e0d3"/>
+      <circle cx="1" cy="1" r="0.4" fill="#b8ad9a" opacity="0.5"/>
+    </pattern>
+    <linearGradient id="paper${page}" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#efe7d7"/><stop offset="1" stop-color="#d8cdb6"/>
+    </linearGradient>
+  </defs>
+  <rect width="360" height="480" fill="url(#paper${page})"/>
+  <rect width="360" height="480" fill="url(#noise${page})" opacity="0.6"/>
+  <g stroke="#3a352a" stroke-width="0.8" fill="none" opacity="0.55">
+    <path d="M 30 60 L 320 60 L 320 90 L 280 110 L 280 200 L 320 220 L 320 380 L 240 410 L 180 380 L 100 410 L 30 390 Z"/>
+    <path d="M 60 200 L 200 200 L 200 320 L 60 320 Z"/>
+    <path d="M 60 240 L 200 240"/><path d="M 130 200 L 130 320"/>
+    <circle cx="260" cy="280" r="22"/>
+    <path d="M 240 280 L 280 280 M 260 260 L 260 300"/>
+  </g>
+  <text x="30" y="35" font-family="serif" font-size="9" fill="#4a4030" opacity="0.7">SITE SURVEY · BLOCK 04 · 1972</text>
+  <text x="30" y="455" font-family="serif" font-size="7" fill="#4a4030" opacity="0.7">Drawn by R. Mehta — Sheet ${page}</text>
+  <ellipse cx="290" cy="340" rx="28" ry="22" fill="#b89a6a" opacity="0.18"/>
+  <ellipse cx="290" cy="340" rx="20" ry="15" fill="none" stroke="#8a6f44" stroke-width="0.6" opacity="0.4"/>
+</svg>`;
+  // text
+  return `
+<svg viewBox="0 0 360 480" xmlns="http://www.w3.org/2000/svg">
+  <rect width="360" height="480" fill="#fdfcf9"/>
+  <g font-family="serif" fill="#0c0c0d">
+    <text x="40" y="60" font-size="14" font-weight="700">3.${page} SCOPE OF WORK</text>
+    <g font-size="6.6">
+      ${Array.from({length: 30}).map((_, i) => {
+        const wide = i % 9 === 0;
+        const len = 220 + Math.random() * 60;
+        return `<text x="40" y="${88 + i * 11}" font-weight="${wide ? 700 : 400}">` +
+          (wide
+            ? `3.${page}.${Math.floor(i/9)+1}  ` + ['Geometry pipeline overview','Parametrization standards','Quality assurance','Deliverables and handoff'][Math.floor(i/9)%4]
+            : 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam.'.slice(0, Math.floor(len/3.4))
+          ) + `</text>`;
+      }).join('')}
+    </g>
+    <text x="40" y="450" font-size="6" fill="#888">Spec Document · Page ${page} of 24</text>
+  </g>
+</svg>`;
+}
+
+/* ───────── Routing ───────── */
+const $ = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+function go(page) {
+  $$('.page').forEach(p => { p.classList.remove('on','entering'); });
+  const el = $('#page-' + page);
+  el.classList.add('on','entering');
+  setTimeout(() => el.classList.remove('entering'), 400);
+  window.scrollTo({ top: 0, behavior: 'instant' });
+}
+
+document.addEventListener('click', (e) => {
+  const t = e.target.closest('[data-go]');
+  if (t) { go(t.dataset.go); }
+});
+
+/* ───────── Hero doc render ───────── */
+if ($('#heroDoc')) $('#heroDoc').innerHTML = FLOOR_PLAN_HERO;
+
+/* ───────── Upload ───────── */
+const drop = $('#drop');
+const realFileInput = $('#realFileInput');
+
+['dragenter','dragover'].forEach(ev =>
+  drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('drag'); }));
+['dragleave','drop'].forEach(ev =>
+  drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('drag'); }));
+
+drop.addEventListener('drop', (e) => {
+  e.preventDefault();
+  const file = e.dataTransfer.files[0];
+  if (file && file.type === 'application/pdf') {
+    handleRealUpload(file);
+  } else {
+    alert('Please drop a valid PDF file.');
+  }
+});
+
+$('#browseBtn').addEventListener('click', () => realFileInput.click());
+realFileInput.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (file) handleRealUpload(file);
+});
+
+$$('.sample').forEach(el => el.addEventListener('click', () => startAnalyze(el.dataset.sample)));
+
+async function handleRealUpload(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  // Initialize UI
+  $('#anlFile').textContent = file.name;
+  $('#anlPct').textContent = '0%';
+  $('#anlRing').setAttribute('stroke-dashoffset', '276.46');
+  $$('.stage').forEach(s => s.classList.remove('done','run'));
+  $$('.stage')[0].classList.add('run');
+  $('#anlStatus').textContent = 'Uploading to engine…';
+  
+  go('analyzing');
+
+  let pct = 0;
+  if (anlTimer) clearInterval(anlTimer);
+  anlTimer = setInterval(() => {
+    pct = Math.min(98, pct + (100 - pct) * 0.05);
+    $('#anlPct').textContent = Math.round(pct) + '%';
+    $('#anlRing').setAttribute('stroke-dashoffset', String(276.46 * (1 - pct / 100)));
+    
+    const stageIdx = Math.min(3, Math.floor(pct / 25));
+    $$('.stage').forEach((s, i) => {
+      s.classList.remove('run','done');
+      if (i < stageIdx) s.classList.add('done');
+      else if (i === stageIdx) s.classList.add('run');
+    });
+  }, 150);
+
+  try {
+    const response = await fetch('http://localhost:8000/analyze', {
+      method: 'POST',
+      body: formData
+    });
+    
+    if (!response.ok) throw new Error('Analysis failed');
+    
+    const result = await response.json();
+    
+    clearInterval(anlTimer);
+    $('#anlPct').textContent = '100%';
+    $('#anlRing').setAttribute('stroke-dashoffset', '0');
+    $$('.stage').forEach(s => { s.classList.remove('run'); s.classList.add('done'); });
+    
+    CURRENT = result;
+    CURRENT.isReal = true;
+    CURRENT_KIND = result.verdict === 'good' ? 'vector' : (result.composition.image > result.composition.text ? 'image' : 'text');
+    CURRENT_PG = 1;
+    
+    setTimeout(() => {
+      renderResults();
+      go('results');
+    }, 600);
+
+  } catch (err) {
+    clearInterval(anlTimer);
+    alert('Error connecting to backend. Make sure the FastAPI server is running on port 8000.');
+    go('upload');
+  }
+}
+
+/* ───────── Analyze ───────── */
+let CURRENT, CURRENT_KIND, CURRENT_PG = 1;
+let anlTimer;
+
+function startAnalyze(kind) {
+  CURRENT = SAMPLES[kind];
+  CURRENT_KIND = kind;
+  CURRENT_PG = 1;
+  $('#anlFile').textContent = CURRENT.name;
+  $('#anlPct').textContent = '0%';
+  $('#anlRing').setAttribute('stroke-dashoffset', '276.46');
+  $$('.stage').forEach(s => s.classList.remove('done','run'));
+  $$('.stage')[0].classList.add('run');
+  $('#anlStatus').textContent = 'Parsing pages and counting vector primitives…';
+
+  go('analyzing');
+
+  let pct = 0;
+  if (anlTimer) clearInterval(anlTimer);
+  const stageMsgs = [
+    'Parsing pages and counting vector primitives…',
+    'Measuring line, curve and hatch geometry…',
+    'Normalizing scores against page area…',
+    'Classifying file and choosing route…',
+  ];
+  anlTimer = setInterval(() => {
+    pct = Math.min(100, pct + Math.random() * 8 + 4);
+    const stageIdx = Math.min(3, Math.floor(pct / 26));
+    $$('.stage').forEach((s, i) => {
+      s.classList.remove('run','done');
+      if (i < stageIdx) s.classList.add('done');
+      else if (i === stageIdx) s.classList.add('run');
+    });
+    $('#anlStatus').textContent = stageMsgs[stageIdx];
+    $('#anlPct').textContent = Math.round(pct) + '%';
+    $('#anlRing').setAttribute('stroke-dashoffset', String(276.46 * (1 - pct / 100)));
+
+    if (pct >= 100) {
+      clearInterval(anlTimer);
+      $$('.stage').forEach(s => { s.classList.remove('run'); s.classList.add('done'); });
+      setTimeout(() => { renderResults(); go('results'); }, 380);
+    }
+  }, 140);
+}
+
+/* ───────── Results render ───────── */
+function renderResults() {
+  const s = CURRENT;
+  $('#resTitle').textContent = s.headline;
+  $('#resFile').textContent = s.name.toUpperCase() + ' · ' + s.meta;
+  $('#resTag').textContent = `PRE-PROCESSING TOOL · RUN #${4218 + Math.floor(Math.random()*900)}`;
+
+  // Hero Verdict
+  const vsR = $('#vsR');
+  vsR.textContent = s.verdict === 'good' ? 'SUITABLE' : 'NOT SUITABLE';
+  vsR.classList.remove('good','bad');
+  vsR.classList.add(s.verdict === 'good' ? 'good' : 'bad');
+  
+  $('#vP').textContent = s.sub;
+  
+  // Hero Stats
+  $('#vsDom').textContent = s.verdict === 'good' ? 'VECTOR' : (CURRENT_KIND === 'image' ? 'IMAGE' : 'TEXT');
+  $('#vsV').textContent = (s.composition.vector + s.composition.hatch).toFixed(2);
+  $('#confPct').textContent = s.confidence + '%';
+  
+  if ($('#nextStep')) $('#nextStep').textContent = s.nextStep;
+
+  // Donut
+  const c = s.composition;
+  const segs = [
+    { k: 'v', val: c.vector, color: 'var(--vec)' },
+    { k: 'h', val: c.hatch,  color: 'var(--hch)' },
+    { k: 'i', val: c.image,  color: 'var(--img)' },
+    { k: 't', val: c.text,   color: 'var(--txt)' },
+  ];
+  const C = 2 * Math.PI * 44;
+  let off = 0;
+  $('#donutSegs').innerHTML = segs.map(seg => {
+    const len = (seg.val / 100) * C;
+    const dasharray = `${len} ${C - len}`;
+    const offset = -off;
+    off += len;
+    return `<circle cx="60" cy="60" r="44" fill="none" stroke="${seg.color}" stroke-width="14"
+      stroke-dasharray="${dasharray}" stroke-dashoffset="${offset}"
+      ${seg.op ? `opacity="${seg.op}"` : ''} />`;
+  }).join('');
+  const dom = c.vector + c.hatch >= Math.max(c.image, c.text) ? (c.vector + c.hatch) :
+              c.image > c.text ? c.image : c.text;
+  $('#donutV').innerHTML = Math.min(100, dom).toFixed(2) + '<small>%</small>';
+
+  // Legend
+  $('#legend').innerHTML = `
+    <div class="lg-row"><span class="lg-sw v"></span><span class="lg-l">Vector %</span><span class="lg-v">${c.vector.toFixed(2)}</span></div>
+    <div class="lg-row"><span class="lg-sw h"></span><span class="lg-l">Hatch area %</span><span class="lg-v">${c.hatch.toFixed(2)}</span></div>
+    <div class="lg-row"><span class="lg-sw i"></span><span class="lg-l">Image %</span><span class="lg-v">${c.image.toFixed(2)}</span></div>
+    <div class="lg-row"><span class="lg-sw t"></span><span class="lg-l">Selectable text %</span><span class="lg-v">${c.text.toFixed(2)}</span></div>
+  `;
+
+  // Per-page
+  const tagFor = { v: 'Vector', i: 'Image', t: 'Text' };
+  $('#pgHint').textContent = s.pages + ' pages';
+  $('#pgRows').innerHTML = s.perPage.map((item, idx) => {
+    const p = item.composition || item; // handle both new object structure and old array
+    return `
+    <div class="pg-row">
+      <span class="pg-num">P.${String(idx+1).padStart(2,'0')}</span>
+      <div class="pg-bar">
+        <i style="width:${p[0]}%;background:var(--vec);"></i>
+        <i style="width:${p[1]}%;background:var(--hch);"></i>
+        <i style="width:${p[2]}%;background:var(--img);"></i>
+        <i style="width:${p[3]}%;background:var(--txt);"></i>
+      </div>
+      <span class="pg-tag ${p[4]}">${tagFor[p[4]]}</span>
+    </div>
+  `}).join('');
+
+  // Metrics
+  renderMetrics(s.metrics, false);
+
+  // Preview
+  $('#prFile').textContent = s.name;
+  $('#prMeta').textContent = s.meta;
+  $('#prClass').textContent = `Page dominant: ${s.verdict === 'good' ? 'VECTOR' : CURRENT_KIND.toUpperCase()}`;
+  renderPdf();
+}
+
+function renderMetrics(metrics, isPage = false) {
+  $('#metricsHint').textContent = isPage ? `Page ${CURRENT_PG} details` : 'Document totals';
+  $('#metrics').innerHTML = metrics.map(([l,v,f]) =>
+    `<div class="met"><div class="l">${l}</div><div class="v">${v}</div><div class="f">${f}</div></div>`
+  ).join('');
+}
+
+function renderPdf() {
+  if (CURRENT.isReal) {
+    const url = `/thumbnail/${encodeURIComponent(CURRENT.name)}/${CURRENT_PG}`;
+    $('#pdfPage').innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:contain;display:block;" />`;
+  } else if (CURRENT.thumbnail) {
+    $('#pdfPage').innerHTML = `<img src="${CURRENT.thumbnail}" style="width:100%;height:100%;object-fit:contain;display:block;" />`;
+  } else {
+    $('#pdfPage').innerHTML = pdfSVG(CURRENT_KIND, CURRENT_PG);
+  }
+  
+  $('#pgLbl').textContent = `Page ${CURRENT_PG} / ${CURRENT.pages}`;
+  
+  // Update metrics for current page if available
+  if (CURRENT.perPage && CURRENT.perPage[CURRENT_PG-1] && CURRENT.perPage[CURRENT_PG-1].metrics) {
+    renderMetrics(CURRENT.perPage[CURRENT_PG-1].metrics, true);
+  }
+
+  $('#pgPrev').disabled = CURRENT_PG <= 1;
+  $('#pgNext').disabled = CURRENT_PG >= CURRENT.pages;
+}
+
+$('#pgPrev').addEventListener('click', () => { if (CURRENT_PG > 1) { CURRENT_PG--; renderPdf(); }});
+$('#pgNext').addEventListener('click', () => { if (CURRENT_PG < CURRENT.pages) { CURRENT_PG++; renderPdf(); }});
+
+/* ───────── Theme ───────── */
+const SUN = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>';
+const MOON = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+function applyTheme(dark) {
+  document.documentElement.classList.toggle('dark', dark);
+  $('#themeIcon').innerHTML = dark ? SUN : MOON;
+  try { localStorage.setItem('godel.dark', dark ? '1' : '0'); } catch(e){}
+}
+applyTheme(localStorage.getItem('godel.dark') === '1');
+$('#themeBtn').addEventListener('click', () => applyTheme(!document.documentElement.classList.contains('dark')));
+</script>
+
+<!-- Tweaks: dark mode + accent color -->
+<script type="text/babel">
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "dark": false,
+  "accent": "#0c0c0d"
+}/*EDITMODE-END*/;
+
+function TweaksApp() {
+  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  React.useEffect(() => {
+    document.documentElement.classList.toggle('dark', !!t.dark);
+    const icon = document.getElementById('themeIcon');
+    if (icon) icon.innerHTML = t.dark
+      ? '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>'
+      : '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+    try { localStorage.setItem('godel.dark', t.dark ? '1' : '0'); } catch(e){}
+    document.documentElement.style.setProperty('--accent', t.accent);
+    // soft variant: low-alpha of accent
+    document.documentElement.style.setProperty('--accent-soft',
+      t.accent + '22');
+  }, [t.dark, t.accent]);
+  return (
+    <TweaksPanel title="Tweaks">
+      <TweakSection label="Theme" />
+      <TweakToggle label="Dark mode" value={t.dark} onChange={(v) => setTweak('dark', v)} />
+      <TweakColor label="Accent" value={t.accent}
+        options={['#0c0c0d', '#2a6fdb', '#1a8f4c', '#c2410c', '#7a5af8']}
+        onChange={(v) => setTweak('accent', v)} />
+    </TweaksPanel>
+  );
+}
+const tweaksRoot = document.createElement('div');
+document.body.appendChild(tweaksRoot);
+ReactDOM.createRoot(tweaksRoot).render(<TweaksApp />);
+</script>
+
+</body>
+</html>

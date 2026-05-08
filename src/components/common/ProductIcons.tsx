@@ -1,6 +1,6 @@
+import React from 'react';
 import { motion } from 'motion/react';
 import { Database } from 'lucide-react';
-import React from 'react';
 
 export const LayoutAnalyzerIcon = () => (
   <div className="w-full h-32 bg-gray-50/50 rounded-2xl mb-6 relative overflow-hidden flex items-center justify-center border border-black/5 group-hover:bg-white transition-colors duration-500">
@@ -34,31 +34,3 @@ export const GeometryToTextIcon = () => (
      </div>
   </div>
 );
-
-export interface Product {
-  id: string;
-  path: string;
-  category: string;
-  categoryStyles: string;
-  name: string;
-  visual: React.ReactNode;
-}
-
-export const PRODUCTS_DATA: Product[] = [
-  {
-    id: "layout-analyzer",
-    path: "/products/layout-analyzer",
-    category: "Pre-Processing Tool",
-    categoryStyles: "bg-[#FF4A22]/10 text-[#FF4A22]",
-    name: "Document Layout Analyzer",
-    visual: <LayoutAnalyzerIcon />
-  },
-  {
-    id: "geom-to-text",
-    path: "/products/geometry-to-text",
-    category: "Core Enterprise Engine",
-    categoryStyles: "bg-black/5 text-black",
-    name: "Geometry to Text Engine",
-    visual: <GeometryToTextIcon />
-  }
-];

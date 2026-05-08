@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import * as LucideIcons from "lucide-react";
 import Layout from "../components/layout/Layout";
-import StoryVisual from "../components/features/visuals/StoryVisual";
+import StoryVisual from "../components/shared/visuals/StoryVisual";
 import { STORY_CHAPTERS, LEADERSHIP_EXPERTISE, STORY_MANIFESTO } from "../data/story";
 import { SITE_CONFIG } from "../data/config";
 

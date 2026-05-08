@@ -1,0 +1,127 @@
+@import "tailwindcss";
+@import "../../theme.css";
+
+@theme {
+  --color-analyzer-accent: var(--color-brand-black);
+  --color-analyzer-good: var(--color-status-good);
+  --color-analyzer-bad: var(--color-status-bad);
+  --color-analyzer-hatch: var(--color-status-hatch);
+}
+
+.layout-analyzer-page {
+  @apply font-sans text-brand-black bg-white antialiased;
+  --maxw: 1280px;
+}
+
+.wrap {
+  @apply max-w-[var(--maxw)] mx-auto px-6 md:px-12 pt-32 pb-24;
+}
+
+@utility tech-label {
+  @apply font-mono text-[10px] text-black/40 uppercase tracking-[0.2em] font-bold;
+}
+
+/* ───────── UI Elements ───────── */
+
+.pill {
+  @apply inline-flex items-center h-7 px-3 rounded-full font-mono text-[10px] font-bold uppercase tracking-widest bg-black/5 text-black;
+}
+
+.card-base {
+  @apply border border-black/10 rounded-2xl p-8 bg-white transition-all duration-300 hover:border-black/20;
+}
+
+/* ───────── Hero Section ───────── */
+.hero-grid {
+  @apply grid grid-cols-1 lg:grid-cols-2 gap-16 items-center;
+}
+
+.hero-header {
+  @apply max-w-4xl;
+}
+
+.hero-header h1 {
+  @apply font-headline font-bold text-5xl md:text-7xl uppercase leading-[0.9] tracking-tighter mb-6;
+}
+
+.hero-header h1 em {
+  @apply font-light text-black/30 not-italic;
+}
+
+/* Enterprise Data Frame */
+.data-frame {
+  @apply border border-black/10 rounded-3xl p-6 bg-white shadow-sm overflow-hidden;
+}
+
+.data-visual {
+  @apply bg-brand-gray rounded-2xl aspect-video relative flex items-center justify-center border border-black/5;
+}
+
+.grid-overlay {
+  @apply absolute inset-0 opacity-10;
+  background-image: radial-gradient(#000 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* ───────── Stats & Results ───────── */
+.stats-grid {
+  @apply grid grid-cols-1 md:grid-cols-3 gap-6 mt-8;
+}
+
+.stat-box {
+  @apply border border-black/10 rounded-xl p-5 bg-white;
+}
+
+.stat-box .label { @apply tech-label mb-2; }
+.stat-box .value { @apply font-headline text-3xl font-bold tracking-tighter; }
+
+.uploader-area {
+  @apply border-2 border-dashed border-black/10 rounded-3xl p-12 text-center bg-gray-50/50 transition-colors hover:border-black/30 hover:bg-white;
+}
+
+.results-header {
+  @apply text-center py-20 bg-gray-50/50 rounded-[40px] mb-12 border border-black/5;
+}
+
+.results-header h1 {
+  @apply font-headline font-black text-6xl md:text-8xl uppercase tracking-tighter leading-none mb-8;
+}
+
+.verdict-badge {
+  @apply inline-block px-10 py-4 rounded-2xl font-headline font-black text-2xl uppercase tracking-tight shadow-xl;
+}
+
+.verdict-badge.good { @apply bg-status-good text-white shadow-green-900/20; }
+.verdict-badge.bad { @apply bg-status-bad text-white shadow-orange-900/20; }
+
+/* Composition Charts */
+.donut-container {
+  @apply w-44 h-44 relative flex items-center justify-center;
+}
+
+.donut-label {
+  @apply absolute flex flex-col items-center;
+}
+
+.donut-label .v { @apply font-headline font-bold text-3xl; }
+.donut-label .l { @apply tech-label; }
+
+/* ───────── Module Specifics ───────── */
+.pg-row {
+  @apply grid grid-cols-[60px_1fr_80px] items-center gap-4 py-4 border-b border-black/5 last:border-0;
+}
+
+.pg-bar {
+  @apply h-2 rounded-full bg-black/5 overflow-hidden flex;
+}
+
+.pg-bar i { @apply h-full transition-all duration-500; }
+
+.animate-spin-slow {
+  animation: spin 8s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

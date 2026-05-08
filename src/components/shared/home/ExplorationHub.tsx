@@ -2,7 +2,7 @@ import { motion } from "motion/react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { HOME_ECOSYSTEM, HOME_ECOSYSTEM_TEXT } from "../../../data/home";
-import { TechnicalLabel } from "../../ui/Typography";
+import { TechnicalLabel } from "../../common/Typography";
 
 const MotionLink = motion(Link);
 

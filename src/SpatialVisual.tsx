@@ -1,11 +1,46 @@
-import { useRef, useMemo } from 'react';
+import { useRef, useMemo, useEffect, Suspense } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Float, MeshDistortMaterial, Sphere, Points, PointMaterial } from '@react-three/drei';
+import { Float, Sphere, Points, PointMaterial, Preload } from '@react-three/drei';
 import * as THREE from 'three';
 
+/**
+ * LogicCore Component
+ * Memoizes geometry and material to prevent redundant GPU allocations.
+ */
 const LogicCore = () => {
   const meshRef = useRef<THREE.Mesh>(null);
   const coreRef = useRef<THREE.Mesh>(null);
+
+  // Strictly memoize and manage disposal
+  const assets = useMemo(() => {
+    const outerGeom = new THREE.IcosahedronGeometry(2, 1);
+    const outerMat = new THREE.MeshBasicMaterial({ 
+      color: "#000000", 
+      wireframe: true, 
+      transparent: true, 
+      opacity: 0.15 
+    });
+    
+    const innerGeom = new THREE.OctahedronGeometry(1.2, 0);
+    const innerMat = new THREE.MeshBasicMaterial({ 
+      color: "#000000", 
+      wireframe: true, 
+      transparent: true, 
+      opacity: 0.3 
+    });
+
+    return { outerGeom, outerMat, innerGeom, innerMat };
+  }, []);
+
+  // Explicit cleanup on unmount
+  useEffect(() => {
+    return () => {
+      assets.outerGeom.dispose();
+      assets.outerMat.dispose();
+      assets.innerGeom.dispose();
+      assets.innerMat.dispose();
+    };
+  }, [assets]);
 
   useFrame((state) => {
     const time = state.clock.getElapsedTime();
@@ -23,29 +58,8 @@ const LogicCore = () => {
 
   return (
     <group>
-      {/* Outer Wireframe Structure */}
-      <mesh ref={meshRef}>
-        <icosahedronGeometry args={[2, 1]} />
-        <meshBasicMaterial 
-          color="#000000" 
-          wireframe 
-          transparent 
-          opacity={0.15} 
-        />
-      </mesh>
-
-      {/* Nested Geometric Core */}
-      <mesh ref={coreRef}>
-        <octahedronGeometry args={[1.2, 0]} />
-        <meshBasicMaterial 
-          color="#000000" 
-          wireframe 
-          transparent 
-          opacity={0.3} 
-        />
-      </mesh>
-
-      {/* Inner "Logic" Node */}
+      <mesh ref={meshRef} geometry={assets.outerGeom} material={assets.outerMat} />
+      <mesh ref={coreRef} geometry={assets.innerGeom} material={assets.innerMat} />
       <Sphere args={[0.2, 16, 16]}>
         <meshBasicMaterial color="#000000" />
       </Sphere>
@@ -53,10 +67,14 @@ const LogicCore = () => {
   );
 };
 
+/**
+ * NeuralNetwork Component
+ * Manages point cloud memory efficiently.
+ */
 const NeuralNetwork = () => {
   const pointsRef = useRef<THREE.Points>(null);
   
-  const [nodes, connections] = useMemo(() => {
+  const nodes = useMemo(() => {
     const count = 100;
     const tempNodes = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
@@ -67,7 +85,7 @@ const NeuralNetwork = () => {
       tempNodes[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
       tempNodes[i * 3 + 2] = r * Math.cos(phi);
     }
-    return [tempNodes, []];
+    return tempNodes;
   }, []);
 
   useFrame((state) => {
@@ -93,20 +111,32 @@ const NeuralNetwork = () => {
 
 const InteractiveScene = () => {
   return (
-    <>
+    <Suspense fallback={null}>
       <ambientLight intensity={0.5} />
       <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
         <LogicCore />
         <NeuralNetwork />
       </Float>
-    </>
+      <Preload all />
+    </Suspense>
   );
 };
 
 export const SpatialVisual = () => {
   return (
     <div className="w-full h-full min-h-[400px] cursor-grab active:cursor-grabbing">
-      <Canvas camera={{ position: [0, 0, 6], fov: 45 }} dpr={[1, 2]}>
+      <Canvas 
+        camera={{ position: [0, 0, 6], fov: 45 }} 
+        dpr={[1, 2]}
+        gl={{ 
+          antialias: true,
+          powerPreference: "high-performance",
+          alpha: true 
+        }}
+        onCreated={({ gl }) => {
+          gl.setClearColor('#ffffff', 0);
+        }}
+      >
         <InteractiveScene />
       </Canvas>
     </div>
@@ -114,3 +144,4 @@ export const SpatialVisual = () => {
 };
 
 export default SpatialVisual;
+

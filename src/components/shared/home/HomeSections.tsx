@@ -2,7 +2,7 @@ import { motion } from "motion/react";
 import * as LucideIcons from "lucide-react";
 import BentoVisual from "../../BentoVisual";
 import { HOME_METRICS, HOME_EXPERTISE } from "../../../data/home";
-import { SectionHeading } from "../../ui/Typography";
+import { SectionHeading } from "../../common/Typography";
 
 export const Metrics = () => {
   return (

@@ -1,9 +1,9 @@
 import { useState, useMemo } from 'react';
 import Layout from '../components/layout/Layout';
 import { motion, AnimatePresence } from 'motion/react';
-import { SolutionsFilter } from '../components/features/solutions/SolutionsFilter';
+import { SolutionsFilter } from '../components/shared/solutions/SolutionsFilter';
 import { SOLUTIONS_DATA, SOLUTIONS_FILTERS, SolutionProject } from '../data/solutions';
-import { TechnicalLabel } from '../components/ui/Typography';
+import { TechnicalLabel } from '../components/common/Typography';
 import { ArrowUpRight } from 'lucide-react';
 
 const SolutionCard = ({ project }: { project: SolutionProject }) => (

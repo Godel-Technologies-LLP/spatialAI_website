@@ -1,8 +1,9 @@
 import { motion } from "motion/react";
-import { FileText, Database, Layers, Zap, Maximize, ArrowRight, ShieldCheck, Globe } from "lucide-react";
+import { FileText, Database, ArrowRight } from "lucide-react";
 import Layout from "../../components/layout/Layout";
-import { TechnicalLabel, SectionHeading } from "../../components/ui/Typography";
+import { TechnicalLabel, SectionHeading } from "../../components/common/Typography";
 import { SITE_CONFIG } from "../../data/config";
+import { GEOM_TO_TEXT_DETAILS } from "./data/details";
 
 const ProductVisual = () => {
   return (
@@ -58,14 +59,7 @@ const ProductVisual = () => {
 };
 
 const GeometryToText = () => {
-  const features = [
-    { title: "Complex PDF Processing", desc: "Engineered to handle engineering drawings, technical diagrams, and heavy layout-based files with ease.", icon: Layers },
-    { title: "Structured Data Extraction", desc: "Turns raw visual information into machine-readable JSON/Excel outputs while maintaining logic.", icon: Database },
-    { title: "Layout-Aware Intelligence", desc: "Understands the physical relationships between elements—not just OCR, but structural comprehension.", icon: Maximize },
-    { title: "Fast & Scalable", desc: "Optimized for high-volume processing, handling large files without performance degradation.", icon: Zap },
-    { title: "Easy to Integrate", desc: "Connects seamlessly to your existing workflows via secure API or on-premise deployment.", icon: Globe },
-    { title: "Enterprise Security", desc: "Built with security in mind, ensuring your sensitive technical data remains protected and private.", icon: ShieldCheck }
-  ];
+  const content = GEOM_TO_TEXT_DETAILS;
 
   return (
     <Layout>
@@ -75,16 +69,14 @@ const GeometryToText = () => {
         <section className="px-6 md:px-12 lg:px-32 max-w-7xl mx-auto mb-20">
           <div className="grid xl:grid-cols-2 gap-16 items-center">
             <div>
-              <TechnicalLabel className="mb-4 opacity-40">Core Enterprise Engine</TechnicalLabel>
-              <h1 className="text-4xl md:text-6xl font-medium tracking-tighter uppercase leading-[0.9] mb-6">
-                Geometry to <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-black to-gray-400">Text Engine</span>
-              </h1>
+              <TechnicalLabel className="mb-4 opacity-40">{content.label}</TechnicalLabel>
+              <h1 className="text-4xl md:text-6xl font-medium tracking-tighter uppercase leading-[0.9] mb-6" dangerouslySetInnerHTML={{ __html: content.headline }} />
               <p className="text-xl text-black/60 font-medium mb-8 leading-relaxed">
-                The ultimate extraction engine. Once you've analyzed the layout, our engine converts those complex PDFs into perfectly structured, machine-readable JSON or Excel outputs.
+                {content.subheadline}
               </p>
               <div className="flex flex-wrap gap-4">
                 <a href={SITE_CONFIG.calendlyLink} target="_blank" rel="noopener noreferrer" className="bg-black text-white px-8 py-4 rounded-full font-medium hover:bg-black/80 transition-all flex items-center gap-2 group shadow-xl shadow-black/10">
-                  Schedule Demo <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  {content.cta_primary} <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </a>
               </div>
             </div>
@@ -115,7 +107,7 @@ const GeometryToText = () => {
         <section className="px-6 md:px-12 lg:px-32 max-w-7xl mx-auto">
           <SectionHeading title="Key Features" subtitle="Built for the most demanding technical documentation." />
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {features.map((feature, i) => (
+            {content.features.map((feature, i) => (
               <div key={i} className="p-8 bg-white border border-black/5 rounded-[32px] hover:shadow-2xl hover:shadow-black/5 transition-all duration-500 group">
                 <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center mb-6 border border-black/5 group-hover:bg-black group-hover:text-white transition-colors duration-500">
                   <feature.icon className="w-5 h-5" />
