@@ -206,7 +206,7 @@ const AnalysisResults = ({
             </div>
             {isRealFile ? (
               <img 
-                src={`${apiBase}/thumbnail/${encodeURIComponent(currentResult.name)}/${currentPage}`}
+                src={`${apiBase}/api/thumbnail?key=${encodeURIComponent(currentResult.blobUrl)}&page=${currentPage}`}
                 alt={`Page ${currentPage}`}
                 className="max-h-[85%] max-w-[85%] object-contain shadow-2xl border border-black/10"
               />

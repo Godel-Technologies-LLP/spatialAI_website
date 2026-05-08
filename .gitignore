@@ -8,3 +8,14 @@ coverage/
 !.env.example
 .vercel
 .env*.local
+
+# Python
+venv/
+**/venv/
+__pycache__/
+**/__pycache__/
+*.pyc
+
+# Local upload artifacts (never commit)
+uploads/
+**/uploads/
