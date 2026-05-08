@@ -8,7 +8,7 @@ const Solutions = lazy(() => import("./pages/Solutions"));
 const CaseStudies = lazy(() => import("./pages/CaseStudies"));
 const OurStory = lazy(() => import("./pages/OurStory"));
 const FAQ = lazy(() => import("./pages/FAQ"));
-const Products = lazy(() => import("./pages/Products"));
+const Products = lazy(() => import("./pages/products"));
 
 // Lazy-loaded modules
 const LayoutAnalyzer = lazy(() => import("./features/layout-analyzer"));

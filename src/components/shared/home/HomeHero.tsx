@@ -1,4 +1,4 @@
-import { motion, useScroll, useTransform } from "motion/react";
+import { motion, useScroll, useTransform, type Variants } from "motion/react";
 import { Suspense, lazy } from "react";
 import { SOCIAL_LINKS } from "../../../constants/links";
 import { HOME_HERO } from "../../../data/home";
@@ -16,7 +16,7 @@ const InteractiveHeroHeading = () => {
     }),
   };
 
-  const child = {
+  const child: Variants = {
     visible: { opacity: 1, y: 0, transition: { type: "spring", damping: 12, stiffness: 100 } },
     hidden: { opacity: 0, y: 20, transition: { type: "spring", damping: 12, stiffness: 100 } },
   };

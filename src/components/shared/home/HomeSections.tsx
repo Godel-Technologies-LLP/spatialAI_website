@@ -40,7 +40,7 @@ export const Expertise = () => {
 
         <div className="grid md:grid-cols-3 gap-8">
           {HOME_EXPERTISE.map((s, i) => {
-            const Icon = LucideIcons[s.icon as keyof typeof LucideIcons] as React.ElementType;
+            const Icon = LucideIcons[s.icon as keyof typeof LucideIcons] as React.ComponentType<{ className?: string }>;
             return (
               <motion.div 
                 key={s.title}

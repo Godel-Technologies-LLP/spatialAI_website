@@ -178,7 +178,7 @@ const OurStory = () => {
               {/* Founder Dossier Grid */}
               <div className="grid lg:grid-cols-3 gap-6">
                 {LEADERSHIP_EXPERTISE.map((item, i) => {
-                  const Icon = LucideIcons[item.icon as keyof typeof LucideIcons] as React.ElementType;
+                  const Icon = LucideIcons[item.icon as keyof typeof LucideIcons] as React.ComponentType<{ className?: string }>;
                   const isMain = i === 0;
 
                   return (
