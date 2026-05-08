@@ -1,9 +1,19 @@
-import * as pdfjsLib from "pdfjs-dist";
-import workerUrl from "pdfjs-dist/build/pdf.worker.min.mjs?url";
+import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.mjs";
+import PdfWorker from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?worker";
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl;
+pdfjsLib.GlobalWorkerOptions.workerPort = new PdfWorker();
 
 const OPS = pdfjsLib.OPS;
+
+// PDF.js v5 introduced a separate enum for path-construction sub-ops,
+// stored as a flat array inside constructPath's args.
+const DRAW_OPS = {
+  moveTo: 0,
+  lineTo: 1,
+  curveTo: 2,
+  quadraticCurveTo: 3,
+  closePath: 4,
+} as const;
 
 export type ProgressFn = (pct: number, status: string) => void;
 
@@ -72,8 +82,6 @@ function walkOperatorList(
   let ctm = [1, 0, 0, 1, 0, 0];
   const ctmStack: number[][] = [];
 
-  let pendingPathBBox: [number, number, number, number] | null = null;
-
   for (let i = 0; i < fnArray.length; i++) {
     const fn = fnArray[i];
     const args = argsArray[i];
@@ -83,109 +91,90 @@ function walkOperatorList(
     } else if (fn === OPS.restore) {
       ctm = ctmStack.pop() ?? [1, 0, 0, 1, 0, 0];
     } else if (fn === OPS.transform) {
-      ctm = multiplyCTM(ctm, args as number[]);
+      if (Array.isArray(args)) ctm = multiplyCTM(ctm, args as number[]);
     } else if (fn === OPS.constructPath) {
-      const [subOps, subArgs, minMax] = args as [
-        number[],
-        number[],
-        [number, number, number, number],
-      ];
-      pendingPathBBox = minMax;
+      // PDF.js v5: argsArray[i] = [paintOp, [pathData], minMax]
+      // pathData is a flat array using DRAW_OPS values interleaved with coords.
+      const paintOp = args?.[0] as number | undefined;
+      const dataWrap = args?.[1];
+      const minMax = args?.[2] as
+        | [number, number, number, number]
+        | undefined;
+      const pathData = Array.isArray(dataWrap) ? dataWrap[0] : dataWrap;
 
-      let idx = 0;
-      let lastX = 0;
-      let lastY = 0;
-      let startX = 0;
-      let startY = 0;
+      if (Array.isArray(pathData)) {
+        let idx = 0;
+        let lastX = 0;
+        let lastY = 0;
+        let startX = 0;
+        let startY = 0;
 
-      for (const sub of subOps) {
-        if (sub === OPS.moveTo) {
-          lastX = subArgs[idx++];
-          lastY = subArgs[idx++];
-          startX = lastX;
-          startY = lastY;
-        } else if (sub === OPS.lineTo) {
-          const x = subArgs[idx++];
-          const y = subArgs[idx++];
-          vectorLength += Math.hypot(x - lastX, y - lastY);
-          lineCount++;
-          lastX = x;
-          lastY = y;
-        } else if (sub === OPS.curveTo) {
-          const c1x = subArgs[idx++];
-          const c1y = subArgs[idx++];
-          const c2x = subArgs[idx++];
-          const c2y = subArgs[idx++];
-          const x = subArgs[idx++];
-          const y = subArgs[idx++];
-          vectorLength +=
-            Math.hypot(c1x - lastX, c1y - lastY) +
-            Math.hypot(c2x - c1x, c2y - c1y) +
-            Math.hypot(x - c2x, y - c2y);
-          curveCount++;
-          lastX = x;
-          lastY = y;
-        } else if (sub === OPS.curveTo2) {
-          const c2x = subArgs[idx++];
-          const c2y = subArgs[idx++];
-          const x = subArgs[idx++];
-          const y = subArgs[idx++];
-          vectorLength +=
-            Math.hypot(c2x - lastX, c2y - lastY) +
-            Math.hypot(x - c2x, y - c2y);
-          curveCount++;
-          lastX = x;
-          lastY = y;
-        } else if (sub === OPS.curveTo3) {
-          const c1x = subArgs[idx++];
-          const c1y = subArgs[idx++];
-          const x = subArgs[idx++];
-          const y = subArgs[idx++];
-          vectorLength +=
-            Math.hypot(c1x - lastX, c1y - lastY) +
-            Math.hypot(x - c1x, y - c1y);
-          curveCount++;
-          lastX = x;
-          lastY = y;
-        } else if (sub === OPS.closePath) {
-          vectorLength += Math.hypot(startX - lastX, startY - lastY);
-          lastX = startX;
-          lastY = startY;
-        } else if (sub === OPS.rectangle) {
-          const x = subArgs[idx++];
-          const y = subArgs[idx++];
-          const w = subArgs[idx++];
-          const h = subArgs[idx++];
-          vectorLength += 2 * (Math.abs(w) + Math.abs(h));
-          quadCount++;
-          lastX = x;
-          lastY = y;
+        while (idx < pathData.length) {
+          const op = pathData[idx++];
+          if (op === DRAW_OPS.moveTo) {
+            lastX = pathData[idx++];
+            lastY = pathData[idx++];
+            startX = lastX;
+            startY = lastY;
+          } else if (op === DRAW_OPS.lineTo) {
+            const x = pathData[idx++];
+            const y = pathData[idx++];
+            vectorLength += Math.hypot(x - lastX, y - lastY);
+            lineCount++;
+            lastX = x;
+            lastY = y;
+          } else if (op === DRAW_OPS.curveTo) {
+            const c1x = pathData[idx++];
+            const c1y = pathData[idx++];
+            const c2x = pathData[idx++];
+            const c2y = pathData[idx++];
+            const x = pathData[idx++];
+            const y = pathData[idx++];
+            vectorLength +=
+              Math.hypot(c1x - lastX, c1y - lastY) +
+              Math.hypot(c2x - c1x, c2y - c1y) +
+              Math.hypot(x - c2x, y - c2y);
+            curveCount++;
+            lastX = x;
+            lastY = y;
+          } else if (op === DRAW_OPS.quadraticCurveTo) {
+            const c1x = pathData[idx++];
+            const c1y = pathData[idx++];
+            const x = pathData[idx++];
+            const y = pathData[idx++];
+            vectorLength +=
+              Math.hypot(c1x - lastX, c1y - lastY) +
+              Math.hypot(x - c1x, y - c1y);
+            quadCount++;
+            lastX = x;
+            lastY = y;
+          } else if (op === DRAW_OPS.closePath) {
+            vectorLength += Math.hypot(startX - lastX, startY - lastY);
+            lastX = startX;
+            lastY = startY;
+          } else {
+            // Unknown sub-op — bail to avoid an infinite loop on malformed data.
+            break;
+          }
         }
       }
-    } else if (
-      fn === OPS.fill ||
-      fn === OPS.eoFill ||
-      fn === OPS.fillStroke ||
-      fn === OPS.eoFillStroke ||
-      fn === OPS.closeFillStroke ||
-      fn === OPS.closeEOFillStroke
-    ) {
-      if (pendingPathBBox) {
-        const [x0, y0, x1, y1] = pendingPathBBox;
-        const w = x1 - x0;
-        const h = y1 - y0;
+
+      const isFill =
+        paintOp === OPS.fill ||
+        paintOp === OPS.eoFill ||
+        paintOp === OPS.fillStroke ||
+        paintOp === OPS.eoFillStroke ||
+        paintOp === OPS.closeFillStroke ||
+        paintOp === OPS.closeEOFillStroke;
+
+      if (isFill && minMax && minMax.length >= 4) {
+        const w = minMax[2] - minMax[0];
+        const h = minMax[3] - minMax[1];
         if (Number.isFinite(w) && Number.isFinite(h)) {
           shadeFillArea += Math.abs(w * h);
         }
         shadeFillCount++;
       }
-      pendingPathBBox = null;
-    } else if (
-      fn === OPS.stroke ||
-      fn === OPS.closeStroke ||
-      fn === OPS.endPath
-    ) {
-      pendingPathBBox = null;
     } else if (
       fn === OPS.paintImageXObject ||
       fn === OPS.paintInlineImageXObject ||
@@ -238,7 +227,12 @@ export async function analyzePdf(
   const buf = await file.arrayBuffer();
 
   onProgress?.(8, "Loading document…");
-  const doc = await pdfjsLib.getDocument({ data: buf }).promise;
+  const doc = await pdfjsLib
+    .getDocument({ data: new Uint8Array(buf) })
+    .promise.catch((err) => {
+      console.error("[pdfAnalyzer] getDocument failed:", err);
+      throw err;
+    });
   const pageCount = doc.numPages;
 
   let totalLine = 0;
@@ -256,22 +250,38 @@ export async function analyzePdf(
     const stagePct = 10 + Math.floor(((p - 1) / pageCount) * 80);
     onProgress?.(stagePct, `Analyzing page ${p} of ${pageCount}…`);
 
-    const page = await doc.getPage(p);
+    let page: pdfjsLib.PDFPageProxy;
+    try {
+      page = await doc.getPage(p);
+    } catch (e) {
+      console.error(`[pdfAnalyzer] getPage(${p}) failed:`, e);
+      throw e;
+    }
     const viewport = page.getViewport({ scale: 1 });
     const pageArea = viewport.width * viewport.height;
     const pageDiag = Math.hypot(viewport.width, viewport.height);
 
-    const textContent = await page.getTextContent();
     let charCount = 0;
-    for (const item of textContent.items as any[]) {
-      if (typeof item.str === "string") charCount += item.str.length;
+    try {
+      const textContent = await page.getTextContent();
+      for (const item of textContent.items as any[]) {
+        if (typeof item.str === "string") charCount += item.str.length;
+      }
+    } catch (e) {
+      console.warn(`[pdfAnalyzer] getTextContent(p=${p}) failed, continuing without text count:`, e);
     }
 
-    const opList = await page.getOperatorList();
-    const counts = walkOperatorList(
-      opList.fnArray as unknown as number[],
-      opList.argsArray as unknown as any[],
-    );
+    let counts: Omit<PageCounts, "charCount">;
+    try {
+      const opList = await page.getOperatorList();
+      counts = walkOperatorList(
+        opList.fnArray as unknown as number[],
+        opList.argsArray as unknown as any[],
+      );
+    } catch (e) {
+      console.error(`[pdfAnalyzer] getOperatorList/walk(p=${p}) failed:`, e);
+      throw e;
+    }
 
     const vectorAreaProxy = counts.vectorLength * pageDiag * 0.001;
     const textAreaProxy = charCount * pageDiag * 0.001;
