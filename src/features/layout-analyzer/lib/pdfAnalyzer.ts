@@ -94,15 +94,23 @@ function walkOperatorList(
       if (Array.isArray(args)) ctm = multiplyCTM(ctm, args as number[]);
     } else if (fn === OPS.constructPath) {
       // PDF.js v5: argsArray[i] = [paintOp, [pathData], minMax]
-      // pathData is a flat array using DRAW_OPS values interleaved with coords.
+      // pathData is a Float32Array of DRAW_OPS codes interleaved with coords
+      // (or null for empty paths, or a plain array in some edge cases).
       const paintOp = args?.[0] as number | undefined;
       const dataWrap = args?.[1];
       const minMax = args?.[2] as
         | [number, number, number, number]
+        | null
         | undefined;
-      const pathData = Array.isArray(dataWrap) ? dataWrap[0] : dataWrap;
+      const rawPathData = Array.isArray(dataWrap) ? dataWrap[0] : dataWrap;
+      // Float32Array satisfies ArrayLike<number>; cast lets us iterate by index.
+      const pathData: ArrayLike<number> | null =
+        rawPathData != null &&
+        (Array.isArray(rawPathData) || ArrayBuffer.isView(rawPathData))
+          ? (rawPathData as ArrayLike<number>)
+          : null;
 
-      if (Array.isArray(pathData)) {
+      if (pathData) {
         let idx = 0;
         let lastX = 0;
         let lastY = 0;
