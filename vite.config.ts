@@ -18,5 +18,20 @@ export default defineConfig(({mode}) => {
     server: {
       hmr: process.env.DISABLE_HMR !== 'true',
     },
+    // mupdf-wasm uses top-level await (TLA); the default Vite/esbuild
+    // target (chrome87/firefox78/safari14) predates TLA support, so bump
+    // build & dev to the first versions that ship it.
+    build: {
+      target: ['chrome89', 'firefox89', 'safari15', 'edge89'],
+    },
+    optimizeDeps: {
+      // mupdf has top-level await and imports Node-only modules (node:fs,
+      // module) that get externalised in browsers. Pre-bundling chokes on
+      // both; serve it as-is and let the native ESM loader handle TLA.
+      exclude: ['mupdf'],
+      esbuildOptions: {
+        target: 'es2022',
+      },
+    },
   };
 });

@@ -1,19 +1,22 @@
-import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.mjs";
-import PdfWorker from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?worker";
+// MuPDF.js exposes the same engine as PyMuPDF (compiled to WASM). We process
+// each page through a custom Device whose callbacks tally up the same path /
+// fill / image primitives that the Python `get_drawings()` walk produces, so
+// the classification numbers track the Python implementation closely.
+//
+// mupdf-wasm is heavy (~3.5 MB compressed) and uses top-level await; loading
+// it eagerly blocks the whole module graph (and breaks Vite's dev pre-bundle).
+// Use a type-only import for the namespace so type annotations cost nothing
+// at runtime, then dynamic-import the module on first analyze.
+import type * as mupdf from "mupdf";
 
-pdfjsLib.GlobalWorkerOptions.workerPort = new PdfWorker();
-
-const OPS = pdfjsLib.OPS;
-
-// PDF.js v5 introduced a separate enum for path-construction sub-ops,
-// stored as a flat array inside constructPath's args.
-const DRAW_OPS = {
-  moveTo: 0,
-  lineTo: 1,
-  curveTo: 2,
-  quadraticCurveTo: 3,
-  closePath: 4,
-} as const;
+type Mupdf = typeof import("mupdf");
+let mupdfPromise: Promise<Mupdf> | null = null;
+function loadMupdf(): Promise<Mupdf> {
+  if (!mupdfPromise) {
+    mupdfPromise = import("mupdf");
+  }
+  return mupdfPromise;
+}
 
 export type ProgressFn = (pct: number, status: string) => void;
 
@@ -46,182 +49,113 @@ export interface AnalysisResult {
 interface PageCounts {
   lineCount: number;
   curveCount: number;
-  quadCount: number;
-  vectorLength: number;
   shadeFillCount: number;
   shadeFillArea: number;
   imageArea: number;
-  charCount: number;
+  vectorLength: number;
 }
 
-function multiplyCTM(m: number[], t: number[]): number[] {
-  const [a1, b1, c1, d1, e1, f1] = m;
-  const [a2, b2, c2, d2, e2, f2] = t;
-  return [
-    a1 * a2 + c1 * b2,
-    b1 * a2 + d1 * b2,
-    a1 * c2 + c1 * d2,
-    b1 * c2 + d1 * d2,
-    a1 * e2 + c1 * f2 + e1,
-    b1 * e2 + d1 * f2 + f1,
-  ];
-}
+function makeStatsDevice(
+  mupdfLib: Mupdf,
+): { stats: PageCounts; device: mupdf.Device } {
+  const stats: PageCounts = {
+    lineCount: 0,
+    curveCount: 0,
+    shadeFillCount: 0,
+    shadeFillArea: 0,
+    imageArea: 0,
+    vectorLength: 0,
+  };
 
-function walkOperatorList(
-  fnArray: number[],
-  argsArray: any[],
-): Omit<PageCounts, "charCount"> {
-  let lineCount = 0;
-  let curveCount = 0;
-  let quadCount = 0;
-  let vectorLength = 0;
-  let shadeFillCount = 0;
-  let shadeFillArea = 0;
-  let imageArea = 0;
+  function walkPath(
+    path: mupdf.Path,
+    isFilled: boolean,
+  ): void {
+    let lastX = 0;
+    let lastY = 0;
+    let startX = 0;
+    let startY = 0;
+    let minX = Infinity;
+    let minY = Infinity;
+    let maxX = -Infinity;
+    let maxY = -Infinity;
 
-  let ctm = [1, 0, 0, 1, 0, 0];
-  const ctmStack: number[][] = [];
+    const touch = (x: number, y: number) => {
+      if (x < minX) minX = x;
+      if (y < minY) minY = y;
+      if (x > maxX) maxX = x;
+      if (y > maxY) maxY = y;
+    };
 
-  for (let i = 0; i < fnArray.length; i++) {
-    const fn = fnArray[i];
-    const args = argsArray[i];
+    path.walk({
+      moveTo(x, y) {
+        lastX = x;
+        lastY = y;
+        startX = x;
+        startY = y;
+        touch(x, y);
+      },
+      lineTo(x, y) {
+        stats.lineCount++;
+        stats.vectorLength += Math.hypot(x - lastX, y - lastY);
+        lastX = x;
+        lastY = y;
+        touch(x, y);
+      },
+      curveTo(x1, y1, x2, y2, x3, y3) {
+        stats.curveCount++;
+        stats.vectorLength +=
+          Math.hypot(x1 - lastX, y1 - lastY) +
+          Math.hypot(x2 - x1, y2 - y1) +
+          Math.hypot(x3 - x2, y3 - y2);
+        lastX = x3;
+        lastY = y3;
+        touch(x3, y3);
+      },
+      closePath() {
+        stats.vectorLength += Math.hypot(startX - lastX, startY - lastY);
+        lastX = startX;
+        lastY = startY;
+      },
+    });
 
-    if (fn === OPS.save) {
-      ctmStack.push(ctm.slice());
-    } else if (fn === OPS.restore) {
-      ctm = ctmStack.pop() ?? [1, 0, 0, 1, 0, 0];
-    } else if (fn === OPS.transform) {
-      if (Array.isArray(args)) ctm = multiplyCTM(ctm, args as number[]);
-    } else if (fn === OPS.constructPath) {
-      // PDF.js v5: argsArray[i] = [paintOp, [pathData], minMax]
-      // pathData is a Float32Array of DRAW_OPS codes interleaved with coords
-      // (or null for empty paths, or a plain array in some edge cases).
-      const paintOp = args?.[0] as number | undefined;
-      const dataWrap = args?.[1];
-      const minMax = args?.[2] as
-        | [number, number, number, number]
-        | null
-        | undefined;
-      const rawPathData = Array.isArray(dataWrap) ? dataWrap[0] : dataWrap;
-      // Float32Array satisfies ArrayLike<number>; cast lets us iterate by index.
-      const pathData: ArrayLike<number> | null =
-        rawPathData != null &&
-        (Array.isArray(rawPathData) || ArrayBuffer.isView(rawPathData))
-          ? (rawPathData as ArrayLike<number>)
-          : null;
-
-      if (pathData) {
-        let idx = 0;
-        let lastX = 0;
-        let lastY = 0;
-        let startX = 0;
-        let startY = 0;
-
-        while (idx < pathData.length) {
-          const op = pathData[idx++];
-          if (op === DRAW_OPS.moveTo) {
-            lastX = pathData[idx++];
-            lastY = pathData[idx++];
-            startX = lastX;
-            startY = lastY;
-          } else if (op === DRAW_OPS.lineTo) {
-            const x = pathData[idx++];
-            const y = pathData[idx++];
-            vectorLength += Math.hypot(x - lastX, y - lastY);
-            lineCount++;
-            lastX = x;
-            lastY = y;
-          } else if (op === DRAW_OPS.curveTo) {
-            const c1x = pathData[idx++];
-            const c1y = pathData[idx++];
-            const c2x = pathData[idx++];
-            const c2y = pathData[idx++];
-            const x = pathData[idx++];
-            const y = pathData[idx++];
-            vectorLength +=
-              Math.hypot(c1x - lastX, c1y - lastY) +
-              Math.hypot(c2x - c1x, c2y - c1y) +
-              Math.hypot(x - c2x, y - c2y);
-            curveCount++;
-            lastX = x;
-            lastY = y;
-          } else if (op === DRAW_OPS.quadraticCurveTo) {
-            const c1x = pathData[idx++];
-            const c1y = pathData[idx++];
-            const x = pathData[idx++];
-            const y = pathData[idx++];
-            vectorLength +=
-              Math.hypot(c1x - lastX, c1y - lastY) +
-              Math.hypot(x - c1x, y - c1y);
-            quadCount++;
-            lastX = x;
-            lastY = y;
-          } else if (op === DRAW_OPS.closePath) {
-            vectorLength += Math.hypot(startX - lastX, startY - lastY);
-            lastX = startX;
-            lastY = startY;
-          } else {
-            // Unknown sub-op — bail to avoid an infinite loop on malformed data.
-            break;
-          }
-        }
+    if (isFilled) {
+      stats.shadeFillCount++;
+      if (Number.isFinite(maxX - minX) && Number.isFinite(maxY - minY)) {
+        stats.shadeFillArea += Math.abs((maxX - minX) * (maxY - minY));
       }
-
-      const isFill =
-        paintOp === OPS.fill ||
-        paintOp === OPS.eoFill ||
-        paintOp === OPS.fillStroke ||
-        paintOp === OPS.eoFillStroke ||
-        paintOp === OPS.closeFillStroke ||
-        paintOp === OPS.closeEOFillStroke;
-
-      if (isFill && minMax && minMax.length >= 4) {
-        const w = minMax[2] - minMax[0];
-        const h = minMax[3] - minMax[1];
-        if (Number.isFinite(w) && Number.isFinite(h)) {
-          shadeFillArea += Math.abs(w * h);
-        }
-        shadeFillCount++;
-      }
-    } else if (
-      fn === OPS.paintImageXObject ||
-      fn === OPS.paintInlineImageXObject ||
-      fn === OPS.paintImageMaskXObject
-    ) {
-      const [a, b, c, d] = ctm;
-      imageArea += Math.abs(a * d - b * c);
     }
   }
 
-  return {
-    lineCount,
-    curveCount,
-    quadCount,
-    vectorLength,
-    shadeFillCount,
-    shadeFillArea,
-    imageArea,
-  };
+  // Count only visible drawings (fill/stroke/image). Clip paths are
+  // rendering-pipeline plumbing (page-bounds clips, glyph clips) and
+  // should not be counted as line/curve geometry — PyMuPDF's
+  // get_drawings() ignores them too.
+  const device = new mupdfLib.Device({
+    fillPath(path) {
+      walkPath(path, true);
+    },
+    strokePath(path) {
+      walkPath(path, false);
+    },
+    fillImage(_image, ctm) {
+      // Image is drawn in the unit square then transformed by ctm.
+      // Rendered area = |a·d − b·c|.
+      stats.imageArea += Math.abs(ctm[0] * ctm[3] - ctm[1] * ctm[2]);
+    },
+    fillImageMask(_image, ctm) {
+      stats.imageArea += Math.abs(ctm[0] * ctm[3] - ctm[1] * ctm[2]);
+    },
+  });
+
+  return { stats, device };
 }
 
-async function renderPageThumbnail(
-  page: pdfjsLib.PDFPageProxy,
-  scale = 1.5,
-): Promise<string> {
-  const viewport = page.getViewport({ scale });
-  const canvas = document.createElement("canvas");
-  canvas.width = Math.ceil(viewport.width);
-  canvas.height = Math.ceil(viewport.height);
-  const ctx = canvas.getContext("2d");
-  if (!ctx) throw new Error("Could not create canvas context");
-
-  await page.render({
-    canvasContext: ctx,
-    viewport,
-    canvas,
-  } as any).promise;
-
-  return canvas.toDataURL("image/png");
+function pixmapToDataUrl(pixmap: mupdf.Pixmap): string {
+  const png = pixmap.asPNG();
+  let binary = "";
+  for (let i = 0; i < png.length; i++) binary += String.fromCharCode(png[i]);
+  return `data:image/png;base64,${btoa(binary)}`;
 }
 
 export async function analyzePdf(
@@ -234,18 +168,18 @@ export async function analyzePdf(
 
   const buf = await file.arrayBuffer();
 
-  onProgress?.(8, "Loading document…");
-  const doc = await pdfjsLib
-    .getDocument({ data: new Uint8Array(buf) })
-    .promise.catch((err) => {
-      console.error("[pdfAnalyzer] getDocument failed:", err);
-      throw err;
-    });
-  const pageCount = doc.numPages;
+  onProgress?.(4, "Loading PDF engine…");
+  const mupdfLib = await loadMupdf();
+
+  onProgress?.(10, "Loading document…");
+  const doc = mupdfLib.Document.openDocument(
+    new Uint8Array(buf),
+    "application/pdf",
+  );
+  const pageCount = doc.countPages();
 
   let totalLine = 0;
   let totalCurve = 0;
-  let totalQuad = 0;
   let totalShadeFill = 0;
   let totalChar = 0;
   let totalVectorLen = 0;
@@ -254,54 +188,54 @@ export async function analyzePdf(
   const perPage: PageMetric[] = [];
   const thumbnails: string[] = [];
 
-  for (let p = 1; p <= pageCount; p++) {
-    const stagePct = 10 + Math.floor(((p - 1) / pageCount) * 80);
-    onProgress?.(stagePct, `Analyzing page ${p} of ${pageCount}…`);
+  const thumbMatrix = mupdfLib.Matrix.scale(1.5, 1.5);
 
-    let page: pdfjsLib.PDFPageProxy;
-    try {
-      page = await doc.getPage(p);
-    } catch (e) {
-      console.error(`[pdfAnalyzer] getPage(${p}) failed:`, e);
-      throw e;
-    }
-    const viewport = page.getViewport({ scale: 1 });
-    const pageArea = viewport.width * viewport.height;
-    const pageDiag = Math.hypot(viewport.width, viewport.height);
+  for (let p = 0; p < pageCount; p++) {
+    const stagePct = 10 + Math.floor((p / pageCount) * 80);
+    onProgress?.(stagePct, `Analyzing page ${p + 1} of ${pageCount}…`);
+
+    const page = doc.loadPage(p);
+    const bounds = page.getBounds();
+    const pageWidth = bounds[2] - bounds[0];
+    const pageHeight = bounds[3] - bounds[1];
+    const pageArea = pageWidth * pageHeight;
+    const pageDiag = Math.hypot(pageWidth, pageHeight);
 
     let charCount = 0;
     try {
-      const textContent = await page.getTextContent();
-      for (const item of textContent.items as any[]) {
-        if (typeof item.str === "string") charCount += item.str.length;
-      }
+      const stxt = page.toStructuredText();
+      charCount = stxt.asText().replace(/\s+/g, "").length;
     } catch (e) {
-      console.warn(`[pdfAnalyzer] getTextContent(p=${p}) failed, continuing without text count:`, e);
+      console.warn(
+        `[pdfAnalyzer] toStructuredText(p=${p + 1}) failed, continuing:`,
+        e,
+      );
     }
 
-    let counts: Omit<PageCounts, "charCount">;
+    const { stats, device } = makeStatsDevice(mupdfLib);
     try {
-      const opList = await page.getOperatorList();
-      counts = walkOperatorList(
-        opList.fnArray as unknown as number[],
-        opList.argsArray as unknown as any[],
-      );
+      // runPageContents (not run) restricts to the explicit drawing
+      // commands in the PDF content stream — same scope as PyMuPDF's
+      // page.get_drawings(). Excludes annotations and widgets.
+      page.runPageContents(device, mupdfLib.Matrix.identity);
     } catch (e) {
-      console.error(`[pdfAnalyzer] getOperatorList/walk(p=${p}) failed:`, e);
+      console.error(
+        `[pdfAnalyzer] runPageContents(p=${p + 1}) failed:`,
+        e,
+      );
       throw e;
     }
 
-    const vectorAreaProxy = counts.vectorLength * pageDiag * 0.001;
+    const vectorAreaProxy = stats.vectorLength * pageDiag * 0.001;
     const textAreaProxy = charCount * pageDiag * 0.001;
 
     const pct = (x: number) => (pageArea ? (x / pageArea) * 100 : 0);
     const vPct = pct(vectorAreaProxy);
-    const hPct = pct(counts.shadeFillArea);
-    const iPct = pct(counts.imageArea);
+    const hPct = pct(stats.shadeFillArea);
+    const iPct = pct(stats.imageArea);
     const tPct = pct(textAreaProxy);
 
     const vTotal = vPct + hPct;
-
     let dominantPage: "v" | "i" | "t" = "v";
     if (iPct > vTotal && iPct >= tPct) dominantPage = "i";
     else if (tPct > vTotal && tPct >= iPct) dominantPage = "t";
@@ -321,10 +255,9 @@ export async function analyzePdf(
     perPage.push({
       composition: [norm[0], norm[1], norm[2], norm[3], dominantPage],
       metrics: [
-        ["Lines", String(counts.lineCount), "line_count"],
-        ["Curves", String(counts.curveCount), "curve_count"],
-        ["Quads", String(counts.quadCount), "quad_count"],
-        ["Hatch", String(counts.shadeFillCount), "shade_fill_count"],
+        ["Lines", String(stats.lineCount), "line_count"],
+        ["Curves", String(stats.curveCount), "curve_count"],
+        ["Hatch", String(stats.shadeFillCount), "shade_fill_count"],
         ["Vector %", vPct.toFixed(2), "v_pct"],
         ["Hatch %", hPct.toFixed(2), "h_pct"],
         ["Image %", iPct.toFixed(2), "i_pct"],
@@ -340,17 +273,24 @@ export async function analyzePdf(
 
     pageRaws.push({ vp: vPct, hp: hPct, ip: iPct, tp: tPct });
 
-    totalLine += counts.lineCount;
-    totalCurve += counts.curveCount;
-    totalQuad += counts.quadCount;
-    totalShadeFill += counts.shadeFillCount;
+    totalLine += stats.lineCount;
+    totalCurve += stats.curveCount;
+    totalShadeFill += stats.shadeFillCount;
     totalChar += charCount;
-    totalVectorLen += counts.vectorLength;
+    totalVectorLen += stats.vectorLength;
 
-    const thumb = await renderPageThumbnail(page);
-    thumbnails.push(thumb);
+    try {
+      const pixmap = page.toPixmap(
+        thumbMatrix,
+        mupdfLib.ColorSpace.DeviceRGB,
+        false,
+      );
+      thumbnails.push(pixmapToDataUrl(pixmap));
+    } catch (e) {
+      console.warn(`[pdfAnalyzer] toPixmap(p=${p + 1}) failed:`, e);
+      thumbnails.push("");
+    }
 
-    page.cleanup();
     await new Promise((r) => setTimeout(r, 0));
   }
 
@@ -413,14 +353,11 @@ export async function analyzePdf(
     ),
   );
 
-  await doc.cleanup();
-  await doc.destroy();
-
   onProgress?.(100, "Analysis complete");
 
   return {
     name: file.name,
-    thumbnail: thumbnails[0],
+    thumbnail: thumbnails[0] ?? "",
     thumbnails,
     meta: `${pageCount} PAGES · ${sizeMb.toFixed(1)} MB · ${sizeTag}`,
     pages: pageCount,
@@ -442,7 +379,6 @@ export async function analyzePdf(
     metrics: [
       ["Lines", totalLine.toLocaleString(), "line_count"],
       ["Curves", totalCurve.toLocaleString(), "curve_count"],
-      ["Quads", String(totalQuad), "quad_count"],
       ["Hatch count", String(totalShadeFill), "shade_fill_count"],
       ["Char count", totalChar.toLocaleString(), "char_count"],
       ["Vector %", avgVp.toFixed(2), "avg v_pct"],
