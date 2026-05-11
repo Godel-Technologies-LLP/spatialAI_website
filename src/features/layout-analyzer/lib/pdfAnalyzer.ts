@@ -71,10 +71,6 @@ function makeStatsDevice(
     path: mupdf.Path,
     isFilled: boolean,
   ): void {
-    let lastX = 0;
-    let lastY = 0;
-    let startX = 0;
-    let startY = 0;
     let minX = Infinity;
     let minY = Infinity;
     let maxX = -Infinity;
@@ -87,37 +83,73 @@ function makeStatsDevice(
       if (y > maxY) maxY = y;
     };
 
+    const ops: { op: string; args: number[] }[] = [];
     path.walk({
       moveTo(x, y) {
-        lastX = x;
-        lastY = y;
-        startX = x;
-        startY = y;
+        ops.push({ op: "m", args: [x, y] });
         touch(x, y);
       },
       lineTo(x, y) {
-        stats.lineCount++;
-        stats.vectorLength += Math.hypot(x - lastX, y - lastY);
-        lastX = x;
-        lastY = y;
+        ops.push({ op: "l", args: [x, y] });
         touch(x, y);
       },
       curveTo(x1, y1, x2, y2, x3, y3) {
-        stats.curveCount++;
-        stats.vectorLength +=
-          Math.hypot(x1 - lastX, y1 - lastY) +
-          Math.hypot(x2 - x1, y2 - y1) +
-          Math.hypot(x3 - x2, y3 - y2);
-        lastX = x3;
-        lastY = y3;
+        ops.push({ op: "c", args: [x1, y1, x2, y2, x3, y3] });
         touch(x3, y3);
       },
       closePath() {
-        stats.vectorLength += Math.hypot(startX - lastX, startY - lastY);
-        lastX = startX;
-        lastY = startY;
+        ops.push({ op: "close", args: [] });
       },
     });
+
+    const subpaths: typeof ops[] = [];
+    let currentSubpath: typeof ops = [];
+    for (const cmd of ops) {
+      if (cmd.op === "m" && currentSubpath.length > 0) {
+        subpaths.push(currentSubpath);
+        currentSubpath = [];
+      }
+      currentSubpath.push(cmd);
+    }
+    if (currentSubpath.length > 0) {
+      subpaths.push(currentSubpath);
+    }
+
+    for (const sub of subpaths) {
+      let isRectSub = false;
+      if (sub.length === 5 && sub[0].op === "m" && sub[1].op === "l" && sub[2].op === "l" && sub[3].op === "l" && (sub[4].op === "close" || sub[4].op === "l")) {
+        isRectSub = true;
+      }
+      
+      if (!isRectSub) {
+        let lastX = 0, lastY = 0, startX = 0, startY = 0;
+        for (const cmd of sub) {
+          if (cmd.op === "m") {
+            lastX = cmd.args[0];
+            lastY = cmd.args[1];
+            startX = lastX;
+            startY = lastY;
+          } else if (cmd.op === "l") {
+            stats.lineCount++;
+            stats.vectorLength += Math.hypot(cmd.args[0] - lastX, cmd.args[1] - lastY);
+            lastX = cmd.args[0];
+            lastY = cmd.args[1];
+          } else if (cmd.op === "c") {
+            stats.curveCount++;
+            stats.vectorLength +=
+              Math.hypot(cmd.args[0] - lastX, cmd.args[1] - lastY) +
+              Math.hypot(cmd.args[2] - cmd.args[0], cmd.args[3] - cmd.args[1]) +
+              Math.hypot(cmd.args[4] - cmd.args[2], cmd.args[5] - cmd.args[3]);
+            lastX = cmd.args[4];
+            lastY = cmd.args[5];
+          } else if (cmd.op === "close") {
+            stats.vectorLength += Math.hypot(startX - lastX, startY - lastY);
+            lastX = startX;
+            lastY = startY;
+          }
+        }
+      }
+    }
 
     if (isFilled) {
       stats.shadeFillCount++;
@@ -315,20 +347,20 @@ export async function analyzePdf(
   let resultText: string;
 
   if (dominant === "VECTOR") {
-    label = "Structured Geometry Detected";
-    sub = `Found ${totalLine.toLocaleString()} lines and ${totalCurve.toLocaleString()} curves across ${pageCount} pages. With a ${vTotal.toFixed(1)}% vector+hatch density and ${totalShadeFill} hatch patterns, this file is fully suitable for parametric extraction.`;
+    label = "Vector-Rich Layout";
+    sub = "";
     verdict = "good";
     sizeTag = "VECTOR";
     resultText = "VECTOR RICH PDF → SUITABLE";
   } else if (dominant === "IMAGE") {
     label = "Image-Heavy Layout";
-    sub = `Dominant signal is IMAGE (${avgIp.toFixed(1)}%). This document contains scanned or rasterized content. Not recommended for direct vectorization.`;
+    sub = "";
     verdict = "bad";
     sizeTag = "SCAN";
     resultText = "IMAGE RICH PDF → NOT SUITABLE";
   } else {
     label = "Text-Rich Document";
-    sub = `Dominant signal is TEXT (${avgTp.toFixed(1)}%). This is primarily a text document with ${totalChar.toLocaleString()} characters. Not recommended for direct vectorization.`;
+    sub = "";
     verdict = "bad";
     sizeTag = "TEXT";
     resultText = "TEXT RICH PDF → NOT SUITABLE";

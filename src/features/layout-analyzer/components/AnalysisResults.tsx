@@ -26,8 +26,7 @@ const AnalysisResults = ({
     const Circ = 2 * Math.PI * 44;
     let off = 0;
     const segs = [
-      { val: composition.vector, color: '#000000' },
-      { val: composition.hatch, color: '#7a5af8' },
+      { val: composition.vector + composition.hatch, color: '#000000' },
       { val: composition.image, color: '#c2410c' },
       { val: composition.text, color: '#6b6b6d' },
     ];
@@ -105,8 +104,7 @@ const AnalysisResults = ({
               
               <div className="flex-1 w-full space-y-4">
                 {[
-                  { label: 'Vector', val: currentResult.composition.vector, color: 'bg-black' },
-                  { label: 'Hatch Area', val: currentResult.composition.hatch, color: 'bg-[#7a5af8]' },
+                  { label: 'Vector', val: currentResult.composition.vector + currentResult.composition.hatch, color: 'bg-black' },
                   { label: 'Image', val: currentResult.composition.image, color: 'bg-[#c2410c]' },
                   { label: 'Selectable Text', val: currentResult.composition.text, color: 'bg-[#6b6b6d]' },
                 ].map((item) => (
@@ -119,8 +117,8 @@ const AnalysisResults = ({
               </div>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-12 pt-8 border-t border-black/5">
-               {currentResult.metrics.slice(0, 6).map((m: any, i: number) => (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12 pt-8 border-t border-black/5">
+               {currentResult.metrics.slice(0, 4).map((m: any, i: number) => (
                  <div className="p-4 bg-gray-50/50 rounded-xl" key={i}>
                    <div className="tech-label text-[8px] opacity-40 mb-1">{m[0]}</div>
                    <div className="font-headline font-bold text-lg leading-none">{m[1]}</div>
@@ -146,8 +144,7 @@ const AnalysisResults = ({
                     <div className="pg-row" key={idx}>
                        <span className="font-mono text-[10px] font-bold text-black/30 tracking-tighter">P.{String(idx+1).padStart(2,'0')}</span>
                        <div className="pg-bar">
-                         <i style={{ width: `${comp[0]}%`, backgroundColor: '#000000' }} />
-                         <i style={{ width: `${comp[1]}%`, backgroundColor: '#7a5af8' }} />
+                         <i style={{ width: `${comp[0] + comp[1]}%`, backgroundColor: '#000000' }} />
                          <i style={{ width: `${comp[2]}%`, backgroundColor: '#c2410c' }} />
                          <i style={{ width: `${comp[3]}%`, backgroundColor: '#6b6b6d' }} />
                        </div>
