@@ -97,8 +97,8 @@ export const SAMPLES = {
     "meta": "12 PAGES · 8.4 MB · VECTOR",
     "pages": 12,
     "verdict": "good",
-    "headline": "Structured Geometry Detected",
-    "sub": "Found 12,410 lines and 4,120 curves across 12 pages. With a 66.0% vector density and 124 hatch patterns, this file is fully suitable for parametric extraction.",
+    "headline": "Vector-Rich Layout",
+    "sub": "",
     "confidence": 98,
     "composition": { "vector": 54, "hatch": 12, "image": 4, "text": 30 },
     "metrics": [
@@ -127,7 +127,7 @@ export const SAMPLES = {
     "pages": 6,
     "verdict": "bad",
     "headline": "Image-Heavy Layout",
-    "sub": "Dominant signal is IMAGE (72.5%). This document contains scanned or rasterized content with minimal selectable geometry. Not recommended for direct vectorization.",
+    "sub": "",
     "confidence": 85,
     "composition": { "vector": 6, "hatch": 2, "image": 73, "text": 19 },
     "metrics": [
@@ -155,7 +155,7 @@ export const SAMPLES = {
     "pages": 24,
     "verdict": "bad",
     "headline": "Text-Rich Document",
-    "sub": "Dominant signal is TEXT (68.4%). This is primarily a text document with 42,180 characters across 24 pages. Not recommended for direct vectorization.",
+    "sub": "",
     "confidence": 91,
     "composition": { "vector": 8, "hatch": 1, "image": 3, "text": 88 },
     "metrics": [
