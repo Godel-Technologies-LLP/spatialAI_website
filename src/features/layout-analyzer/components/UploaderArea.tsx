@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { Upload, Layers, ImageIcon, FileText } from 'lucide-react';
+import { Upload, Layers, ImageIcon, FileText, ShieldCheck, Lock } from 'lucide-react';
 
 interface UploaderAreaProps {
   onGo: (step: string) => void;
@@ -47,12 +47,18 @@ const UploaderArea = ({
               }
             }}
           >
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-50 border border-emerald-100 rounded-full mx-auto mb-6">
+              <ShieldCheck size={12} className="text-emerald-700" strokeWidth={2.5} />
+              <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-emerald-800">
+                Processed in your browser · Nothing uploaded
+              </span>
+            </div>
             <div className="w-16 h-16 bg-white rounded-full shadow-sm border border-black/5 flex items-center justify-center mx-auto mb-6 text-black/40">
               <Upload size={24} />
             </div>
             <h2 className="font-headline font-bold text-3xl uppercase tracking-tight mb-4">Upload PDF for Analysis</h2>
             <p className="text-black/50 text-base max-w-lg mx-auto mb-10 leading-relaxed">
-              Drop your engineering drawings, surveys, or spec sheets here to evaluate suitability for geometric vectorization.
+              Drop your engineering drawings, surveys, or spec sheets here to evaluate suitability for geometric vectorization. Files are analyzed locally — we never see your documents.
             </p>
             <div className="flex justify-center">
               <button 
@@ -72,7 +78,10 @@ const UploaderArea = ({
             <div className="flex justify-center gap-10 mt-12 pt-8 border-t border-black/5">
               <div className="tech-label">Max 100MB</div>
               <div className="tech-label">Multi-page support</div>
-              <div className="tech-label">Confidential</div>
+              <div className="tech-label flex items-center gap-1.5">
+                <Lock size={9} strokeWidth={2.5} />
+                100% On-Device
+              </div>
             </div>
           </div>
 

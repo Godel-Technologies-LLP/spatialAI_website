@@ -1,6 +1,18 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { Check } from 'lucide-react';
+import {
+  IllusComplexPdf,
+  IllusStructuralAnalysis,
+  IllusLayoutAware,
+  StepIngest,
+  StepMeasure,
+  StepNormalize,
+  StepClassify,
+} from './Illustrations';
+
+const FEATURE_ILLUSTRATIONS = [IllusComplexPdf, IllusStructuralAnalysis, IllusLayoutAware];
+const STEP_ILLUSTRATIONS = [StepIngest, StepMeasure, StepNormalize, StepClassify];
 
 interface ProductOverviewProps {
   content: any;
@@ -62,33 +74,55 @@ const ProductOverview = ({ content, onGo }: ProductOverviewProps) => {
         </div>
         
         {content.features && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-24 mb-24">
-            {content.features.map((feature: any, i: number) => (
-              <div className="card-base" key={i}>
-                <div className="w-12 h-12 bg-black/5 rounded-xl flex items-center justify-center mb-6">
-                  <feature.icon size={22} />
-                </div>
-                <h3 className="font-headline font-bold text-xl uppercase mb-3">{feature.title}</h3>
-                <p className="text-black/60 text-sm leading-relaxed">{feature.desc}</p>
-              </div>
-            ))}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-black/5 border border-black/5 rounded-3xl overflow-hidden mt-24 mb-24">
+            {content.features.map((feature: any, i: number) => {
+              const Illus = FEATURE_ILLUSTRATIONS[i];
+              return (
+                <motion.div
+                  key={i}
+                  className="bg-white p-10 flex flex-col items-start text-black"
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.08 }}
+                >
+                  <div className="w-full h-24 mb-8 text-black/70">{Illus && <Illus />}</div>
+                  <h3 className="font-headline font-bold text-base uppercase tracking-tight mb-2">{feature.title}</h3>
+                  <p className="text-black/50 text-sm leading-relaxed">{feature.desc}</p>
+                </motion.div>
+              );
+            })}
           </div>
         )}
 
         {content.howItWorks && (
           <div className="border-t border-black/10 pt-20 pb-20">
-            <div className="flex items-baseline justify-between mb-12">
+            <div className="flex items-baseline justify-between mb-16">
               <h3 className="font-headline font-bold text-3xl uppercase">{content.howItWorks.title}</h3>
               <div className="tech-label">{content.howItWorks.label}</div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              {content.howItWorks.steps.map((step: any, i: number) => (
-                <div className="stat-box group hover:border-black/30 transition-colors" key={i}>
-                  <div className="font-mono text-[10px] text-black/30 font-bold mb-4">{step.n}</div>
-                  <h4 className="font-headline font-bold text-lg uppercase mb-2">{step.title}</h4>
-                  <p className="text-black/50 text-xs leading-relaxed">{step.desc}</p>
-                </div>
-              ))}
+            <div className="relative grid grid-cols-1 md:grid-cols-4 gap-10">
+              <div className="hidden md:block absolute top-10 left-[12.5%] right-[12.5%] h-px border-t border-dashed border-black/15" />
+              {content.howItWorks.steps.map((step: any, i: number) => {
+                const Illus = STEP_ILLUSTRATIONS[i];
+                return (
+                  <motion.div
+                    key={i}
+                    className="relative flex flex-col items-center text-center"
+                    initial={{ opacity: 0, y: 8 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.1 }}
+                  >
+                    <div className="relative z-10 w-20 h-20 bg-white border border-black/10 rounded-full flex items-center justify-center text-black mb-6 shadow-sm">
+                      {Illus && <Illus />}
+                    </div>
+                    <div className="font-mono text-[10px] text-black/30 font-bold mb-2">{step.n}</div>
+                    <h4 className="font-headline font-bold text-base uppercase mb-2">{step.title}</h4>
+                    <p className="text-black/50 text-xs leading-relaxed max-w-[200px]">{step.desc}</p>
+                  </motion.div>
+                );
+              })}
             </div>
           </div>
         )}
