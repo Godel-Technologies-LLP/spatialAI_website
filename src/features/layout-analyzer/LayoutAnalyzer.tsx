@@ -1,6 +1,6 @@
 import React from "react";
 import { AnimatePresence } from "motion/react";
-import { Moon, Sun } from "lucide-react";
+import { Moon, Sun, Code2 } from "lucide-react";
 
 import Layout from "../../components/layout/Layout";
 import { LAYOUT_ANALYZER_DETAILS } from "./data/details";
@@ -81,13 +81,42 @@ const LayoutAnalyzer = () => {
         </AnimatePresence>
 
         {/* Theme Toggle Floating Button */}
-        <button 
-          className="theme-btn" 
+        <button
+          className="theme-btn"
           style={{position:'fixed', bottom: 32, right: 32, zIndex: 100, boxShadow: '0 4px 12px rgba(0,0,0,0.1)'}}
           onClick={toggleTheme}
         >
           {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
         </button>
+
+        {/* AGPL source-availability footer (per license obligations) */}
+        <footer className="analyzer-license-footer">
+          <div className="wrap flex flex-col md:flex-row md:items-center md:justify-between gap-3 py-8 border-t border-black/10">
+            <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-black/40">
+              Document Layout Analyzer · Processed entirely in your browser
+            </div>
+            <div className="flex items-center gap-4 font-mono text-[10px] uppercase tracking-[0.2em] text-black/40">
+              <a
+                href="https://github.com/Godel-Technologies-LLP/spatialAI_website"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 hover:text-black transition-colors"
+              >
+                <Code2 size={11} strokeWidth={2} />
+                View source
+              </a>
+              <span className="opacity-30">·</span>
+              <a
+                href="https://www.gnu.org/licenses/agpl-3.0.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-black transition-colors"
+              >
+                Licensed under AGPL-3.0
+              </a>
+            </div>
+          </div>
+        </footer>
 
       </div>
     </Layout>
