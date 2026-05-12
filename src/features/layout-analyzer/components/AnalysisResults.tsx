@@ -222,22 +222,7 @@ const AnalysisResults = ({
            </button>
         </div>
 
-        <div className="mt-12 bg-black rounded-3xl p-12 md:p-16 flex flex-col md:flex-row items-center justify-between gap-10">
-          <div>
-            <h3 className="font-headline font-bold text-2xl md:text-3xl text-white uppercase leading-tight mb-3">
-              Want to automatically extract your PDF contents?
-            </h3>
-            <p className="text-white/60 text-base max-w-xl">
-              Whether it's geometric data, text, or images — our team can set up the right pipeline for your documents.
-            </p>
-          </div>
-          <a 
-            href="/contact"
-            className="h-14 px-10 bg-white text-black rounded-full font-bold hover:bg-white/90 transition-colors shrink-0 flex items-center gap-3"
-          >
-            Contact Us <span className="opacity-40">→</span>
-          </a>
-        </div>
+
       </div>
     </motion.main>
   );
