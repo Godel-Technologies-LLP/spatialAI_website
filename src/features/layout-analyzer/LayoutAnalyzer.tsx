@@ -3,6 +3,7 @@ import { AnimatePresence } from "motion/react";
 import { Moon, Sun, Code2 } from "lucide-react";
 
 import Layout from "../../components/layout/Layout";
+import { CONTACT_METADATA } from "../../constants/links";
 import { LAYOUT_ANALYZER_DETAILS } from "./data/details";
 import { useLayoutAnalysis } from "./hooks/useLayoutAnalysis";
 
@@ -97,13 +98,11 @@ const LayoutAnalyzer = () => {
             </div>
             <div className="flex items-center gap-4 font-mono text-[10px] uppercase tracking-[0.2em] text-black/40">
               <a
-                href="https://github.com/Godel-Technologies-LLP/spatialAI_website"
-                target="_blank"
-                rel="noopener noreferrer"
+                href={`mailto:${CONTACT_METADATA.EMAIL}?subject=${encodeURIComponent("Source-code request — spatialAI_website (AGPL-3.0)")}&body=${encodeURIComponent("Hello,\n\nUnder the terms of the AGPL-3.0 license, I am requesting access to the complete corresponding source code for the version of spatialAI_website currently deployed.\n\nThank you.")}`}
                 className="inline-flex items-center gap-1.5 hover:text-black transition-colors"
               >
                 <Code2 size={11} strokeWidth={2} />
-                View source
+                Request source
               </a>
               <span className="opacity-30">·</span>
               <a
