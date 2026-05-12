@@ -348,22 +348,22 @@ export async function analyzePdf(
 
   if (dominant === "VECTOR") {
     label = "Vector-Rich Layout";
-    sub = "";
+    sub = "This PDF is dominated by geometric primitives — lines, curves, and hatches. It is best suited for geometric extraction.";
     verdict = "good";
     sizeTag = "VECTOR";
-    resultText = "VECTOR RICH PDF → SUITABLE";
+    resultText = "VECTOR RICH PDF → GEOMETRIC EXTRACTION";
   } else if (dominant === "IMAGE") {
     label = "Image-Heavy Layout";
-    sub = "";
+    sub = "This PDF is primarily composed of raster images or scanned content. It is best suited for LLM-based visual interpretation.";
     verdict = "bad";
     sizeTag = "SCAN";
-    resultText = "IMAGE RICH PDF → NOT SUITABLE";
+    resultText = "IMAGE RICH PDF → LLM-BASED PROCESSING";
   } else {
     label = "Text-Rich Document";
-    sub = "";
+    sub = "This PDF is primarily composed of selectable text. It is best suited for LLM-based text extraction and interpretation.";
     verdict = "bad";
     sizeTag = "TEXT";
-    resultText = "TEXT RICH PDF → NOT SUITABLE";
+    resultText = "TEXT RICH PDF → LLM-BASED PROCESSING";
   }
 
   const rawTotal = avgVp + avgHp + avgIp + avgTp;

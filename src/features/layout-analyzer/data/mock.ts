@@ -98,7 +98,7 @@ export const SAMPLES = {
     "pages": 12,
     "verdict": "good",
     "headline": "Vector-Rich Layout",
-    "sub": "",
+    "sub": "This PDF is dominated by geometric primitives — lines, curves, and hatches. It is best suited for geometric extraction.",
     "confidence": 98,
     "composition": { "vector": 54, "hatch": 12, "image": 4, "text": 30 },
     "metrics": [
@@ -127,7 +127,7 @@ export const SAMPLES = {
     "pages": 6,
     "verdict": "bad",
     "headline": "Image-Heavy Layout",
-    "sub": "",
+    "sub": "This PDF is primarily composed of raster images or scanned content. It is best suited for LLM-based visual interpretation.",
     "confidence": 85,
     "composition": { "vector": 6, "hatch": 2, "image": 73, "text": 19 },
     "metrics": [
@@ -155,7 +155,7 @@ export const SAMPLES = {
     "pages": 24,
     "verdict": "bad",
     "headline": "Text-Rich Document",
-    "sub": "",
+    "sub": "This PDF is primarily composed of selectable text. It is best suited for LLM-based text extraction and interpretation.",
     "confidence": 91,
     "composition": { "vector": 8, "hatch": 1, "image": 3, "text": 88 },
     "metrics": [

@@ -62,7 +62,7 @@ const AnalysisResults = ({
           <div className="tech-label mb-6">Analysis Report Complete</div>
           <h1>{currentResult.headline}</h1>
           <div className={`verdict-badge ${currentResult.verdict === 'good' ? 'good' : 'bad'}`}>
-            {currentResult.verdict === 'good' ? 'SUITABLE' : 'NOT SUITABLE'}
+            {currentResult.verdict === 'good' ? 'GEOMETRIC EXTRACTION' : 'LLM-BASED PROCESSING'}
           </div>
           <p className="text-xl text-black/60 max-w-2xl mx-auto mt-8">{currentResult.sub}</p>
           
@@ -213,13 +213,30 @@ const AnalysisResults = ({
           </div>
         </div>
 
-        <div className="mt-16 text-center">
+        <div className="mt-16 text-center space-y-6">
            <button 
             className="h-14 px-10 border border-black/10 rounded-full font-bold hover:bg-black hover:text-white hover:border-black transition-all"
             onClick={() => onGo('upload')}
            >
             Analyze Another Document
            </button>
+        </div>
+
+        <div className="mt-12 bg-black rounded-3xl p-12 md:p-16 flex flex-col md:flex-row items-center justify-between gap-10">
+          <div>
+            <h3 className="font-headline font-bold text-2xl md:text-3xl text-white uppercase leading-tight mb-3">
+              Want to automatically extract your PDF contents?
+            </h3>
+            <p className="text-white/60 text-base max-w-xl">
+              Whether it's geometric data, text, or images — our team can set up the right pipeline for your documents.
+            </p>
+          </div>
+          <a 
+            href="/contact"
+            className="h-14 px-10 bg-white text-black rounded-full font-bold hover:bg-white/90 transition-colors shrink-0 flex items-center gap-3"
+          >
+            Contact Us <span className="opacity-40">→</span>
+          </a>
         </div>
       </div>
     </motion.main>
