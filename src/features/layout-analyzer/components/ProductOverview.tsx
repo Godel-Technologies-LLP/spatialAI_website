@@ -28,7 +28,8 @@ const ProductOverview = ({ content, onGo }: ProductOverviewProps) => {
       className="page-section"
     >
       <div className="wrap">
-        <div className="hero-grid">
+        <div className="min-h-[85vh] flex flex-col justify-center relative pb-16">
+          <div className="hero-grid">
           <div className="hero-header">
             <div className="pill mb-4">{content.label}</div>
             <h1 dangerouslySetInnerHTML={{ __html: content.headline }} />
@@ -40,6 +41,13 @@ const ProductOverview = ({ content, onGo }: ProductOverviewProps) => {
               >
                 {content.cta_primary} <span className="opacity-40">→</span>
               </button>
+              <a
+                href="/layout-analyzer-whitepaper.pdf"
+                download="Layout_Analyzer_Whitepaper.pdf"
+                className="h-14 px-8 bg-transparent text-black border-2 border-black/10 rounded-full font-bold flex items-center justify-center hover:border-black/30 hover:bg-black/5 transition-all"
+              >
+                {content.cta_secondary}
+              </a>
             </div>
           </div>
           
@@ -72,26 +80,50 @@ const ProductOverview = ({ content, onGo }: ProductOverviewProps) => {
             </div>
           </div>
         </div>
+
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1, duration: 1 }}
+            className="absolute bottom-0 left-1/2 -translate-x-1/2 flex flex-col items-center justify-center"
+          >
+            <p className="text-[10px] text-black/30 font-bold tracking-[0.2em] uppercase mb-3">Scroll to discover</p>
+            <motion.div 
+              animate={{ y: [0, 6, 0] }}
+              transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+              className="w-5 h-8 border-2 border-black/15 rounded-full flex justify-center p-1"
+            >
+              <div className="w-1 h-1.5 bg-black/30 rounded-full" />
+            </motion.div>
+          </motion.div>
+        </div>
         
         {content.features && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-black/5 border border-black/5 rounded-3xl overflow-hidden mt-24 mb-24">
-            {content.features.map((feature: any, i: number) => {
-              const Illus = FEATURE_ILLUSTRATIONS[i];
-              return (
-                <motion.div
-                  key={i}
-                  className="bg-white p-10 flex flex-col items-start text-black"
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.08 }}
-                >
-                  <div className="w-full h-24 mb-8 text-black/70">{Illus && <Illus />}</div>
-                  <h3 className="font-headline font-bold text-base uppercase tracking-tight mb-2">{feature.title}</h3>
-                  <p className="text-black/50 text-sm leading-relaxed">{feature.desc}</p>
-                </motion.div>
-              );
-            })}
+          <div className="mt-24 mb-24">
+            {content.featuresTitle && (
+              <div className="flex items-baseline justify-between mb-16">
+                <h3 className="font-headline font-bold text-3xl uppercase">{content.featuresTitle}</h3>
+              </div>
+            )}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-black/5 border border-black/5 rounded-3xl overflow-hidden">
+              {content.features.map((feature: any, i: number) => {
+                const Illus = FEATURE_ILLUSTRATIONS[i];
+                return (
+                  <motion.div
+                    key={i}
+                    className="bg-white p-10 flex flex-col items-start text-black"
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.08 }}
+                  >
+                    <div className="w-full h-24 mb-8 text-black/70">{Illus && <Illus />}</div>
+                    <h3 className="font-headline font-bold text-base uppercase tracking-tight mb-2">{feature.title}</h3>
+                    <p className="text-black/50 text-sm leading-relaxed">{feature.desc}</p>
+                  </motion.div>
+                );
+              })}
+            </div>
           </div>
         )}
 
@@ -99,7 +131,6 @@ const ProductOverview = ({ content, onGo }: ProductOverviewProps) => {
           <div className="border-t border-black/10 pt-20 pb-20">
             <div className="flex items-baseline justify-between mb-16">
               <h3 className="font-headline font-bold text-3xl uppercase">{content.howItWorks.title}</h3>
-              <div className="tech-label">{content.howItWorks.label}</div>
             </div>
             <div className="relative grid grid-cols-1 md:grid-cols-4 gap-10">
               <div className="hidden md:block absolute top-10 left-[12.5%] right-[12.5%] h-px border-t border-dashed border-black/15" />
@@ -130,18 +161,20 @@ const ProductOverview = ({ content, onGo }: ProductOverviewProps) => {
         <div className="bg-black rounded-3xl p-12 md:p-16 flex flex-col md:flex-row items-center justify-between gap-10">
           <div>
             <h3 className="font-headline font-bold text-3xl md:text-4xl text-white uppercase leading-tight mb-4">
-              {content.headline.replace(/<\/?[^>]+(>|$)/g, "")}
+              Want to know the correct extraction strategy for your PDF?
             </h3>
             <p className="text-white/60 text-base max-w-xl">
-              Stop guessing. Start measuring document quality before you commit to vectorization.
+              Stop guessing. Start understanding what your PDFs are made of and choose the right extraction strategy with confidence.
             </p>
           </div>
-          <button 
-            className="h-14 px-10 bg-white text-black rounded-full font-bold hover:bg-white/90 transition-colors shrink-0" 
-            onClick={() => onGo('upload')}
+          <a 
+            href="https://calendly.com/vishwa-godeltech/30min"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="h-14 px-10 bg-white text-black rounded-full font-bold flex items-center justify-center hover:bg-white/90 transition-colors shrink-0" 
           >
-            Start Analyzing Now
-          </button>
+            CONTACT US
+          </a>
         </div>
       </div>
     </motion.main>

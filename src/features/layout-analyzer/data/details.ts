@@ -4,14 +4,16 @@ export const LAYOUT_ANALYZER_DETAILS = {
   id: "layout-analyzer",
   name: "Document Layout Analyzer",
   label: "Pre-Processing Tool",
-  headline: "Know if a PDF is <em>worth vectorizing</em> before you spend a cycle.",
-  subheadline: "Our structural analysis engine classifies documents based on vector density, raster fragmentation, and semantic layers—giving you the 'go/no-go' signal for your geometry pipeline.",
+  headline: "<em>Know what your pdf</em> is made of before you spend a cycle.",
+  subheadline: "Two PDFs can look the same on screen yet be built from completely different primitives -> vectors, Images, or selectable text, etc. Understanding what your PDF is made of is the first step to choosing the right extraction strategy.",
   cta_primary: "Analyze your document",
   cta_secondary: "Read Whitepaper",
+  featuresTitle: "Core Capabilities",
+  featuresLabel: "Engineered for Precision",
   features: [
     { title: "Complex PDF Processing", desc: "Engineered to handle engineering drawings, technical diagrams, and heavy layout-based files with ease.", icon: Layers },
     { title: "Structural Analysis", desc: "Determines if a document is suitable for geometric vectorization based on primitive density.", icon: Database },
-    { title: "Layout-Aware Intelligence", desc: "Understands the physical relationships between elements—not just OCR, but structural comprehension.", icon: Maximize }
+    { title: "Layout-Aware Intelligence", desc: "Understands the physical relationships between elements and gives a structural comprehension.", icon: Maximize }
   ],
   howItWorks: {
     title: "How it works",

@@ -53,6 +53,13 @@ export const HOME_EXPERTISE = [
 
 export const HOME_ECOSYSTEM = [
   {
+    title: "Products",
+    desc: "Pre-processing tools and spatial AI engines.",
+    link: "/products",
+    tag: "ENGINES",
+    visual: "products"
+  },
+  {
     title: "Industrial Solutions",
     desc: "Architecting the core logic of spatial intelligence.",
     link: "/solutions",

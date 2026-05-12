@@ -50,7 +50,7 @@ const UploaderArea = ({
             <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-50 border border-emerald-100 rounded-full mx-auto mb-6">
               <ShieldCheck size={12} className="text-emerald-700" strokeWidth={2.5} />
               <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-emerald-800">
-                Processed in your browser · Nothing uploaded
+                Processed in your browser · Data remains local
               </span>
             </div>
             <div className="w-16 h-16 bg-white rounded-full shadow-sm border border-black/5 flex items-center justify-center mx-auto mb-6 text-black/40">

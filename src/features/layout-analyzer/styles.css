@@ -41,7 +41,7 @@
 }
 
 .hero-header h1 {
-  @apply font-headline font-bold text-5xl md:text-7xl uppercase leading-[0.9] tracking-tighter mb-6;
+  @apply font-headline font-bold text-5xl md:text-7xl leading-[0.9] tracking-tighter mb-6;
 }
 
 .hero-header h1 em {
