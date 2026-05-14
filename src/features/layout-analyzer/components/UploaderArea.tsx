@@ -56,6 +56,7 @@ const UploaderArea = ({
     const { error } = await supabase.auth.signInWithOtp({
       email: leadData.email,
       options: {
+        emailRedirectTo: window.location.origin + '/products/layout-analyzer',
         data: {
           name: leadData.name,
           company: leadData.company,

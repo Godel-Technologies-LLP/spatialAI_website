@@ -62,6 +62,9 @@ const AdminLeads = () => {
 
     const { error } = await supabase.auth.signInWithOtp({
       email: loginEmail,
+      options: {
+        emailRedirectTo: window.location.origin + '/products/layout-analyzer/admin',
+      }
     });
 
     if (error) {
