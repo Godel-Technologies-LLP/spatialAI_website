@@ -1,4 +1,4 @@
-import { useRef, useMemo } from 'react';
+import { useRef, useMemo, useState, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Float, PerspectiveCamera } from '@react-three/drei';
 import * as THREE from 'three';
@@ -23,17 +23,14 @@ const Hourglass = () => {
 
   return (
     <group ref={groupRef}>
-      {/* Top Cone */}
       <mesh position={[0, 1, 0]} rotation={[Math.PI, 0, 0]}>
         <coneGeometry args={[1, 1, 16, 1]} />
         <WireframeMaterial />
       </mesh>
-      {/* Bottom Cone */}
       <mesh position={[0, -1, 0]}>
         <coneGeometry args={[1, 1, 16, 1]} />
         <WireframeMaterial />
       </mesh>
-      {/* Frame */}
       <mesh>
         <cylinderGeometry args={[1.1, 1.1, 2.2, 16, 1, true]} />
         <WireframeMaterial />
@@ -49,8 +46,6 @@ const Torus = () => {
     if (meshRef.current) {
         meshRef.current.rotation.x = state.clock.getElapsedTime() * 0.3;
         meshRef.current.rotation.y = state.clock.getElapsedTime() * 0.5;
-        const s = 1 + Math.sin(state.clock.getElapsedTime() * 2) * 0.05;
-        meshRef.current.scale.set(s, s, s);
     }
   });
 
@@ -64,33 +59,17 @@ const Torus = () => {
 
 const Waveform = () => {
     const meshRef = useRef<THREE.Mesh>(null);
-    
-    // Create a terrain-like geometry
-    const geometry = useMemo(() => {
-        const geo = new THREE.PlaneGeometry(4, 4, 32, 32);
-        return geo;
-    }, []);
+    const geometry = useMemo(() => new THREE.PlaneGeometry(4, 4, 16, 16), []);
 
     useFrame((state) => {
         if (meshRef.current) {
-            const time = state.clock.getElapsedTime();
-            const position = meshRef.current.geometry.attributes.position;
-            
-            for (let i = 0; i < position.count; i++) {
-                const x = position.getX(i);
-                const y = position.getY(i);
-                // Simple wave function
-                const z = Math.sin(x * 1.5 + time) * 0.2 + Math.cos(y * 1.5 + time) * 0.2;
-                position.setZ(i, z);
-            }
-            position.needsUpdate = true;
-            meshRef.current.rotation.x = -Math.PI / 3;
-            meshRef.current.rotation.z = time * 0.1;
+            meshRef.current.rotation.z = state.clock.getElapsedTime() * 0.1;
+            meshRef.current.position.z = Math.sin(state.clock.getElapsedTime()) * 0.1;
         }
     });
 
     return (
-        <mesh ref={meshRef} geometry={geometry}>
+        <mesh ref={meshRef} geometry={geometry} rotation={[-Math.PI / 3, 0, 0]}>
             <WireframeMaterial />
         </mesh>
     );
@@ -101,19 +80,35 @@ interface BentoVisualProps {
 }
 
 const BentoVisual = ({ type }: BentoVisualProps) => {
+  const [isInView, setIsInView] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsInView(entry.isIntersecting),
+      { threshold: 0.1 }
+    );
+    if (containerRef.current) observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className="w-full h-full min-h-[180px] cursor-grab active:cursor-grabbing">
-      <Canvas dpr={[1, 2]}>
-        <PerspectiveCamera makeDefault position={[0, 0, 5]} fov={40} />
-        <ambientLight intensity={0.5} />
-        <pointLight position={[10, 10, 10]} />
-        
-        <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
-          {type === 'hourglass' && <Hourglass />}
-          {type === 'torus' && <Torus />}
-          {type === 'waveform' && <Waveform />}
-        </Float>
-      </Canvas>
+    <div ref={containerRef} className="w-full h-full min-h-[180px] cursor-grab active:cursor-grabbing">
+      {isInView ? (
+        <Canvas dpr={1} gl={{ antialias: false }}>
+          <PerspectiveCamera makeDefault position={[0, 0, 5]} fov={40} />
+          <ambientLight intensity={0.5} />
+          <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
+            {type === 'hourglass' && <Hourglass />}
+            {type === 'torus' && <Torus />}
+            {type === 'waveform' && <Waveform />}
+          </Float>
+        </Canvas>
+      ) : (
+        <div className="w-full h-full flex items-center justify-center opacity-10">
+           <div className="w-24 h-24 border border-black/20 rounded-full animate-pulse" />
+        </div>
+      )}
     </div>
   );
 };
