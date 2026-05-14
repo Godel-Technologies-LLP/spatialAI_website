@@ -47,7 +47,8 @@ function App() {
           <Route path="/casestudies/conversational-ai" element={<ConversationalAI />} />
           <Route path="/ourstory" element={<OurStory />} />
           <Route path="/faq" element={<FAQ />} />
-          <Route path="/admin" element={<AdminLeads />} />
+          <Route path="/products/layout-analyzer/admin" element={<AdminLeads />} />
+
         </Routes>
       </Suspense>
     </Router>
