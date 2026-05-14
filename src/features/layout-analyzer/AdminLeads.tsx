@@ -173,7 +173,7 @@ const AdminLeads = () => {
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <span className="px-2 py-0.5 bg-black text-white text-[8px] font-bold uppercase tracking-widest rounded">Admin Only</span>
-                <h1 className="font-headline font-bold text-4xl uppercase tracking-tight">Leads Dashboard</h1>
+                <h1 className="font-headline font-bold text-4xl uppercase tracking-tight">Analysis Dashboard</h1>
               </div>
               <p className="text-black/50">Authenticated as: <b className="text-black">{user.email}</b></p>
             </div>
@@ -220,7 +220,7 @@ const AdminLeads = () => {
                   ) : data.length === 0 ? (
                     <tr>
                       <td colSpan={7} className="px-6 py-12 text-center text-black/40">
-                        No lead data found. Upload a document in the Layout Analyzer first.
+                        No analysis data found. Upload a document in the Layout Analyzer first.
                       </td>
                     </tr>
                   ) : (
@@ -256,7 +256,7 @@ const AdminLeads = () => {
           
           <div className="mt-8 flex items-center justify-between">
             <div className="text-xs text-black/40 font-mono">
-              Total Leads: <b className="text-black">{data.length}</b>
+              Total Analyses: <b className="text-black">{data.length}</b>
             </div>
             <div className="text-[10px] text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-100 flex items-center gap-2">
               <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
