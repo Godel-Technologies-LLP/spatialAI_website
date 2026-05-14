@@ -1,5 +1,5 @@
-import React from 'react';
 import { motion } from 'motion/react';
+import { Link } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Download, Share2 } from 'lucide-react';
 import DynamicSVGViewer from './DynamicSVGViewer';
 import { getPdfSVG } from '../data/mock';
@@ -213,12 +213,29 @@ const AnalysisResults = ({
           </div>
         </div>
 
-        <div className="mt-16 text-center space-y-6">
+        <div className="mt-24 bg-black rounded-[40px] p-12 md:p-20 flex flex-col md:flex-row items-center justify-between gap-10 text-left">
+          <div className="max-w-2xl">
+            <h3 className="font-headline font-bold text-3xl md:text-5xl text-white uppercase leading-tight mb-6">
+              Ready to Turn These <br /> Vectors Into Native CAD?
+            </h3>
+            <p className="text-white/60 text-lg font-medium leading-relaxed">
+              Now that you've validated your PDF's structure, take the final step. Reconstruct your static layouts into smart, high-fidelity CAD & BIM components instantly.
+            </p>
+          </div>
+          <Link 
+            to="/products/geometry-to-text"
+            className="h-16 px-12 bg-white text-black rounded-full font-bold flex items-center justify-center hover:bg-white/90 transition-all hover:scale-105 active:scale-95 shrink-0" 
+          >
+            GEOMETRY TO COMPONENT
+          </Link>
+        </div>
+
+        <div className="mt-12 text-center">
            <button 
-            className="h-14 px-10 border border-black/10 rounded-full font-bold hover:bg-black hover:text-white hover:border-black transition-all"
+            className="text-[10px] uppercase font-bold tracking-[0.3em] text-black/40 hover:text-black transition-colors"
             onClick={() => onGo('upload')}
            >
-            Analyze Another Document
+            ← Analyze Another Document
            </button>
         </div>
 

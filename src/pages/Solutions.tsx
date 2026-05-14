@@ -96,9 +96,8 @@ const Solutions = () => {
             className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-20"
           >
             <div className="max-w-2xl">
-              <TechnicalLabel className="mb-4 opacity-40">System Logic</TechnicalLabel>
-              <h1 className="text-4xl md:text-6xl font-medium tracking-tighter uppercase leading-none">
-                Industrial <br /> Solutions
+              <h1 className="text-4xl md:text-6xl font-medium tracking-tighter leading-none">
+                Industrial Solutions
               </h1>
               <p className="text-base md:text-lg text-black/40 mt-6 font-medium">
                 Filter through our expertise across technical domains, industry verticals, and specific algorithmic applications.

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { SAMPLES } from "../data/mock";
 import { analyzePdf } from "../lib/pdfAnalyzer";
+import { supabase } from "../lib/supabase";
 
 export const useLayoutAnalysis = () => {
   const [currentStep, setCurrentStep] = useState('product'); // product, upload, analyzing, results
@@ -57,7 +58,7 @@ export const useLayoutAnalysis = () => {
     }, 140);
   }, [go]);
 
-  const processFile = useCallback(async (file: File) => {
+  const processFile = useCallback(async (file: File, leadData?: any) => {
     setIsRealFile(true);
     setCurrentResult(null);
     setAnalysisPct(0);
@@ -72,6 +73,30 @@ export const useLayoutAnalysis = () => {
 
       setAnalysisPct(100);
       setAnalysisStatus('Analysis complete');
+
+      // Save analytics to Supabase
+      if (leadData) {
+        try {
+          const { error } = await supabase.from('document_analytics').insert([
+            {
+              name: leadData.name,
+              email: leadData.email,
+              company: leadData.company || null,
+              document_name: file.name,
+              verdict: result.verdict,
+              raw_metrics: result
+            }
+          ]);
+
+          if (error) {
+            console.error("Failed to save analytics to Supabase:", error);
+          } else {
+            console.log("Analytics saved successfully to Supabase for:", leadData.email);
+          }
+        } catch(e) {
+          console.error("Failed to save analytics:", e);
+        }
+      }
 
       setTimeout(() => {
         setCurrentResult(result);
@@ -96,10 +121,10 @@ export const useLayoutAnalysis = () => {
     }
   }, [go]);
 
-  const handleFileUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>, leadData?: any) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    processFile(file);
+    processFile(file, leadData);
   }, [processFile]);
 
   return {

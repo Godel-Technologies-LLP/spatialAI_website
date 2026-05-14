@@ -1,5 +1,5 @@
-import React from 'react';
 import { motion } from 'motion/react';
+import { Link } from 'react-router-dom';
 import { Check } from 'lucide-react';
 import {
   IllusComplexPdf,
@@ -158,23 +158,21 @@ const ProductOverview = ({ content, onGo }: ProductOverviewProps) => {
           </div>
         )}
 
-        <div className="bg-black rounded-3xl p-12 md:p-16 flex flex-col md:flex-row items-center justify-between gap-10">
-          <div>
-            <h3 className="font-headline font-bold text-3xl md:text-4xl text-white uppercase leading-tight mb-4">
-              Want to know the correct extraction strategy for your PDF?
+        <div className="bg-black rounded-[40px] p-12 md:p-20 flex flex-col md:flex-row items-center justify-between gap-10">
+          <div className="max-w-2xl">
+            <h3 className="font-headline font-bold text-3xl md:text-5xl text-white uppercase leading-tight mb-6">
+              Ready to Turn These <br /> Vectors Into Native CAD?
             </h3>
-            <p className="text-white/60 text-base max-w-xl">
-              Stop guessing. Start understanding what your PDFs are made of and choose the right extraction strategy with confidence.
+            <p className="text-white/60 text-lg font-medium leading-relaxed">
+              The analyzer proved your document is compatible. Take the final step and use our primary engine to automatically reconstruct your static PDF into smart, editable CAD & BIM components.
             </p>
           </div>
-          <a 
-            href="https://calendly.com/vishwa-godeltech/30min"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="h-14 px-10 bg-white text-black rounded-full font-bold flex items-center justify-center hover:bg-white/90 transition-colors shrink-0" 
+          <Link 
+            to="/products/geometry-to-text"
+            className="h-16 px-12 bg-white text-black rounded-full font-bold flex items-center justify-center hover:bg-white/90 transition-all hover:scale-105 active:scale-95 shrink-0" 
           >
-            CONTACT US
-          </a>
+            GEOMETRY TO COMPONENT
+          </Link>
         </div>
       </div>
     </motion.main>

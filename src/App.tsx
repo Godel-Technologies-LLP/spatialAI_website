@@ -17,6 +17,8 @@ const AssetCreation = lazy(() => import("./features/asset-creation"));
 const DigitisingFarmlands = lazy(() => import("./features/digitising-farmlands"));
 const ConversationalAI = lazy(() => import("./features/conversational-ai"));
 
+const AdminLeads = lazy(() => import("./features/layout-analyzer/AdminLeads"));
+
 // ScrollToTop component to ensure pages start at the top on navigation
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -45,6 +47,7 @@ function App() {
           <Route path="/casestudies/conversational-ai" element={<ConversationalAI />} />
           <Route path="/ourstory" element={<OurStory />} />
           <Route path="/faq" element={<FAQ />} />
+          <Route path="/admin" element={<AdminLeads />} />
         </Routes>
       </Suspense>
     </Router>

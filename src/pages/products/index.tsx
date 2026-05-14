@@ -18,8 +18,8 @@ const Products = () => {
             transition={{ duration: 0.8 }}
             className="max-w-3xl"
           >
-            <h1 className="text-4xl md:text-6xl font-medium tracking-tighter uppercase leading-[0.9] mb-6">
-              Intelligence for <br /> <span className="text-black/40 font-light">Complex Documents</span>
+            <h1 className="text-4xl md:text-6xl font-medium tracking-tighter leading-[0.9] mb-6">
+              Intelligence For <br /> <span className="text-black/40 font-light">Complex Documents</span>
             </h1>
             <p className="text-base md:text-lg text-black/60 font-medium max-w-xl">
               Explore our growing suite of spatial data extraction and analysis tools. Click a product to view specifications.
@@ -41,7 +41,7 @@ const Products = () => {
                   <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest mb-3 ${product.categoryStyles}`}>
                     {product.category}
                   </div>
-                  <h3 className="text-xl font-medium tracking-tighter uppercase mb-2 leading-tight">{product.name}</h3>
+                  <h3 className="text-xl font-medium tracking-tighter mb-2 leading-tight">{product.name}</h3>
                 </div>
                 <div className="w-10 h-10 rounded-full border border-black/10 bg-white flex items-center justify-center shrink-0 transition-all duration-500 group-hover:bg-black group-hover:text-white group-hover:border-black self-start mt-4">
                   <ArrowRight className="w-5 h-5 transition-transform duration-500 group-hover:-rotate-45" />
