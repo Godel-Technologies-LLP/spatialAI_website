@@ -38,7 +38,10 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/products" element={<Products />} />
-          <Route path="/products/layout-analyzer" element={<LayoutAnalyzer />} />
+          <Route path="/products/layout-analyzer">
+            <Route index element={<LayoutAnalyzer />} />
+            <Route path="admin" element={<AdminLeads />} />
+          </Route>
           <Route path="/products/geometry-to-text" element={<GeometryToText />} />
           <Route path="/solutions" element={<Solutions />} />
           <Route path="/casestudies" element={<CaseStudies />} />
@@ -47,7 +50,6 @@ function App() {
           <Route path="/casestudies/conversational-ai" element={<ConversationalAI />} />
           <Route path="/ourstory" element={<OurStory />} />
           <Route path="/faq" element={<FAQ />} />
-          <Route path="/products/layout-analyzer/admin" element={<AdminLeads />} />
 
         </Routes>
       </Suspense>
