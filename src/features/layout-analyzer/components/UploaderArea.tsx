@@ -42,6 +42,23 @@ const UploaderArea = ({
   const handleLeadSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!leadData.name || !leadData.email) return;
+
+    // Block common personal/free email domains to enforce business email submission
+    const BLOCKED_DOMAINS = [
+      'gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'live.com', 
+      'icloud.com', 'aol.com', 'mail.com', 'zoho.com', 'yandex.com', 
+      'proton.me', 'protonmail.com', 'protonmail.ch', 'gmx.com', 
+      'gmx.net', 'mail.ru', 'inbox.com', 'msn.com', 'rediffmail.com', 
+      'qq.com', '163.com'
+    ];
+    
+    const emailStr = leadData.email.trim().toLowerCase();
+    const domain = emailStr.split('@')[1];
+    
+    if (domain && BLOCKED_DOMAINS.includes(domain)) {
+      setErrorMsg('Please enter a valid business email address. Personal email domains (such as Gmail, Yahoo, or Outlook) are not permitted.');
+      return;
+    }
     
     // Check if Supabase env vars are set
     if (!import.meta.env.VITE_SUPABASE_URL) {
