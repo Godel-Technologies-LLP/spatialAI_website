@@ -3,7 +3,7 @@ const LAYOUT_ANALYZER_METADATA = {
   path: "/products/layout-analyzer",
   category: "Pre-Processing Tool",
   categoryStyles: "bg-[#FF4A22]/10 text-[#FF4A22]",
-  name: "Document Layout Analyzer",
+  name: "PDF Vetter Tool",
   iconId: "layout-analyzer",
   order: 1
 };

@@ -223,7 +223,7 @@ const AdminLeads = () => {
                   ) : data.length === 0 ? (
                     <tr>
                       <td colSpan={7} className="px-6 py-12 text-center text-black/40">
-                        No analysis data found. Upload a document in the Layout Analyzer first.
+                        No analysis data found. Upload a document in the PDF Vetter Tool first.
                       </td>
                     </tr>
                   ) : (

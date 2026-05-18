@@ -1,6 +1,6 @@
 # spatialAI
 
-Godel Technologies' marketing site and product surface — including the **Document Layout Analyzer**, an in-browser tool that classifies PDFs by their suitability for geometric vectorization.
+Godel Technologies' marketing site and product surface — including the **PDF Vetter Tool**, an in-browser tool that classifies PDFs by their suitability for geometric vectorization.
 
 The analyzer runs **entirely client-side**. Uploaded PDFs never leave the user's device — they are parsed and analyzed in WebAssembly inside the browser.
 
@@ -46,7 +46,7 @@ src/
   App.tsx                      Routes
   pages/                       Top-level pages (Home, Solutions, FAQ, …)
   features/                    Feature modules
-    layout-analyzer/           Document Layout Analyzer
+    layout-analyzer/           PDF Vetter Tool
       lib/pdfAnalyzer.ts       Client-side analyzer (MuPDF Device walker)
       components/              Upload / progress / results UI
     geometry-to-text/          Geometry-to-Text product page
@@ -85,7 +85,7 @@ Full dependency licenses are available via `npm ls --all` and in each package's 
 
 ## Privacy
 
-The Document Layout Analyzer is engineered so that **no user file ever leaves the browser**. The PDF is read into memory via `File.arrayBuffer()`, processed by an in-browser WASM build of MuPDF, and discarded when the user navigates away. No file, byte, or derived artifact is sent to any server.
+The PDF Vetter Tool is engineered so that **no user file ever leaves the browser**. The PDF is read into memory via `File.arrayBuffer()`, processed by an in-browser WASM build of MuPDF, and discarded when the user navigates away. No file, byte, or derived artifact is sent to any server.
 
 This is verifiable in DevTools → Network tab while analyzing a file.
 

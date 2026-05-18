@@ -87,7 +87,7 @@ const LayoutAnalyzer = () => {
         <footer className="analyzer-license-footer">
           <div className="wrap flex flex-col md:flex-row md:items-center md:justify-between gap-3 py-8 border-t border-black/10">
             <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-black/40">
-              Document Layout Analyzer · Processed entirely in your browser
+              PDF Vetter Tool · Processed entirely in your browser
             </div>
             <div className="flex items-center gap-4 font-mono text-[10px] uppercase tracking-[0.2em] text-black/40">
               <a

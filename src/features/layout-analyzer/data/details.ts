@@ -2,7 +2,7 @@ import { Layers, Database, Maximize } from "lucide-react";
 
 export const LAYOUT_ANALYZER_DETAILS = {
   id: "layout-analyzer",
-  name: "Document Layout Analyzer",
+  name: "PDF Vetter Tool",
   label: "Pre-Processing Tool",
   headline: "<em>Know what your pdf</em> is made of before you spend a cycle.",
   subheadline: "Two PDFs can look the same on screen yet be built from completely different primitives -> vectors, Images, or selectable text, etc. Understanding what your PDF is made of is the first step to choosing the right extraction strategy.",
