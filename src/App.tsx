@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { useEffect, Suspense, lazy } from "react";
+import { Analytics } from "@vercel/analytics/react";
 import LoadingFallback from "./components/common/LoadingFallback";
 
 // Lazy-loaded pages
@@ -53,6 +54,7 @@ function App() {
 
         </Routes>
       </Suspense>
+      <Analytics />
     </Router>
   );
 }
